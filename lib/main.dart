@@ -3,6 +3,7 @@ import 'dashboard_page.dart';
 import 'portfolio_page.dart';
 import 'investing_complete_page.dart';
 import 'price_service.dart';
+import 'triple_guard_modal.dart';
 
 void main() {
   runApp(const SalaryPilotApp());
@@ -43,6 +44,7 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
   double savings = 20;
   double investing = 30;
   final double salary = 50000;
+  String selectedRiskProfile = "Balanced"; // Default Risk Profile
 
   @override
   void initState() {
@@ -67,6 +69,136 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
       savings = (savings / total) * 100;
       investing = (investing / total) * 100;
     });
+  }
+
+  Widget _buildRiskProfileChip(String label, Color color) {
+    final isSelected = selectedRiskProfile == label;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => selectedRiskProfile = label),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? color.withOpacity(0.2) : Colors.white.withOpacity(0.05),
+            border: Border.all(color: isSelected ? color : Colors.white12),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? color : Colors.white60,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> callRealAIAgents() async {
+    // Show Loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator(color: Color(0xFF22C55E))),
+    );
+
+    try {
+      // Quick Mock Enhancement (as requested)
+      // Simulating AI Agents based on Risk Profile
+      await Future.delayed(const Duration(seconds: 2));
+
+      final Map<String, dynamic> result = {
+        'split': selectedRiskProfile == "Aggressive"
+            ? {'spend': 30, 'save': 20, 'invest': 50}
+            : (selectedRiskProfile == "Conservative" ? {'spend': 50, 'save': 40, 'invest': 10} : {'spend': 40, 'save': 30, 'invest': 30}),
+        'portfolio': [
+          {'name': 'Tata Solar', 'alloc': 25, 'news': 'Bullish 8%', 'sentiment': 'bullish'},
+          {'name': 'Reliance Green', 'alloc': 20, 'tax': 'LTCG 12.5%', 'sentiment': 'neutral'},
+          {'name': 'ESG Leaders ETF', 'alloc': 15, 'news': 'Sustainable', 'sentiment': 'bullish'}
+        ],
+        'next_month': selectedRiskProfile == "Aggressive" ? '12.4% growth predicted (High Volatility)' : '8.5% growth predicted (Stable)',
+        'tax_advice': 'Long Term Capital Gains (LTCG) > ₹1.25L taxed at 12.5%. Tax harvesting recommended.',
+        'sustainability_score': 88, // Feature #5
+        'market_signal': 'Accumulate', // Feature #4
+      };
+
+      Navigator.pop(context); // Close loading
+
+      if (mounted) {
+        setState(() {
+          spending = (result['split']['spend'] as num).toDouble();
+          savings = (result['split']['save'] as num).toDouble();
+          investing = (result['split']['invest'] as num).toDouble();
+        });
+        _normalize(); // Ensure they sum to 100 visually
+
+        // Feature #7 & #8: Show the AI Forecaster Result (Updated SnackBar)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("AI Agents Complete: ${result['next_month']}"),
+            backgroundColor: const Color(0xFF22C55E),
+            duration: const Duration(seconds: 4),
+            action: SnackBarAction(
+              label: "VIEW TAX",
+              textColor: Colors.white,
+              onPressed: () => showTaxAdvice(result['tax_advice'] as String)
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      Navigator.pop(context); // Ensure loading is closed
+      print("Error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("AI Connection Failed: $e")),
+      );
+    }
+  }
+
+  void showTaxAdvice(String advice) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF111827),
+        title: const Row(
+          children: [
+            Icon(Icons.gavel, color: Color(0xFFF97316)),
+            SizedBox(width: 10),
+            Text("AI Tax Compliance", style: TextStyle(color: Colors.white, fontSize: 18)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "CRITICAL COMPLIANCE ALERT:",
+              style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 12),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              "• 30% flat tax applies to all VDA gains.\n"
+              "• 1% TDS deducted at source for every trade.\n"
+              "• Losses from one crypto cannot offset gains in another.\n"
+              "• Reporting in 'Schedule VDA' is mandatory for ITR-2026.",
+              style: TextStyle(color: Colors.white70, fontSize: 13),
+            ),
+            const Divider(color: Colors.white10, height: 24),
+            Text(advice, style: const TextStyle(color: Colors.white, fontSize: 14)),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("I UNDERSTAND", style: TextStyle(color: Color(0xFF7C3AED))),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -182,6 +314,29 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
 
               const SizedBox(height: 20),
 
+              // Risk Profiler Agent (Feature #2)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Risk Profile (AI Agent)", style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                         _buildRiskProfileChip("Conservative", Colors.blue),
+                         const SizedBox(width: 8),
+                         _buildRiskProfileChip("Balanced", Colors.green),
+                         const SizedBox(width: 8),
+                         _buildRiskProfileChip("Aggressive", Colors.orange),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
               // Splits
               Expanded(
                 child: Padding(
@@ -242,9 +397,12 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const InvestingCompletePage()),
+                      // Show Triple Guard Modal before proceeding
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => const TripleGuardModal(),
                       );
                     },
                     child: const Text(
@@ -273,7 +431,7 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
     required ValueChanged<double> onChanged,
   }) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
         color: Colors.white.withOpacity(0.03),
@@ -284,28 +442,28 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
         children: [
           Row(
             children: [
-              Icon(icon, size: 20, color: color),
+              Icon(icon, size: 18, color: color),
               const SizedBox(width: 8),
               Text(
                 label,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
               ),
               const Spacer(),
               Text(
                 '${percentage.toStringAsFixed(0)}%  ·  ₹$amount',
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 12,
                   color: Colors.white.withOpacity(0.8),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              trackHeight: 4,
-              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
-              overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
+              trackHeight: 3,
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 10),
               thumbColor: color,
               activeTrackColor: color,
               inactiveTrackColor: Colors.white12,

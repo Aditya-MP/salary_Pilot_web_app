@@ -130,54 +130,73 @@ class _PortfolioPageState extends State<PortfolioPage> {
         builder: (context, snapshot) {
           final prices = snapshot.data ?? PriceService().getCurrentPrices();
           final assets = [
-            {'name': 'Reliance Green Energy', 'icon': '📈'},
-            {'name': 'Solana Green Lending', 'icon': '🌿'},
-            {'name': 'Cardano ESG Pool', 'icon': '🔗'},
-            {'name': 'SBI Magnum ESG', 'icon': '💰'},
-            {'name': 'Digital Gold', 'icon': '🥇'},
+            {'name': 'Reliance Green Energy', 'type': 'EQUITY'},
+            {'name': 'Solana Green Lending', 'type': 'VDA'}, // Virtual Digital Asset
+            {'name': 'Cardano ESG Pool', 'type': 'VDA'},
+            {'name': 'SBI Magnum ESG', 'type': 'EQUITY'},
+            {'name': 'Digital Gold', 'type': 'COMMODITY'},
           ];
           
           return Column(
-            children: assets.asMap().entries.map((entry) {
-              final index = entry.key;
-              final asset = entry.value;
+            children: assets.map((asset) {
               final name = asset['name']!;
+              final type = asset['type']!;
               final priceData = prices[name] ?? {'price': 0, 'change': '0'};
               
-              final isPositive = double.tryParse(priceData['change'].toString())?.isNegative != true;
-              final color = isPositive ? const Color(0xFF22C55E) : const Color(0xFFF97316);
+              // --- TAX PREVIEW LOGIC ---
+              double estimatedProfit = (priceData['price'] as num) * 0.15; // Mock profit for demo
+              String taxPreview = "";
               
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
+              if (type == 'VDA') {
+                 // 30% Tax on Profit + 1% TDS on Total Sale
+                double tax = (estimatedProfit * 0.30) + (priceData['price'] * 0.01);
+                taxPreview = "Tax: ₹${tax.round()} (30% + 1% TDS)";
+              } else if (type == 'EQUITY') {
+                // 12.5% LTCG (assuming > 1.25L threshold met for demo)
+                double tax = estimatedProfit * 0.125;
+                taxPreview = "Tax: ₹${tax.round()} (12.5% LTCG)";
+              } else {
+                taxPreview = "Tax: Slab Rates apply";
+              }
+
+              return Container(
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   color: Colors.white.withOpacity(0.04),
-                  border: Border.all(color: color.withOpacity(0.2)),
+                  border: Border.all(color: Colors.white.withOpacity(0.1)),
                 ),
                 child: Row(
                   children: [
-                    Text(asset['icon']!, style: const TextStyle(fontSize: 20)),
+                    Text(
+                      name == 'Reliance Green Energy' ? '📈' : 
+                      name == 'Solana Green Lending' ? '🌿' :
+                      name == 'Cardano ESG Pool' ? '🔗' :
+                      name == 'SBI Magnum ESG' ? '💰' : '🥇',
+                      style: const TextStyle(fontSize: 20)
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                          Text('₹${priceData['price']} • 13.8% APY', style: const TextStyle(fontSize: 12, color: Colors.white60)),
+                          Text(taxPreview, style: const TextStyle(fontSize: 11, color: Colors.orangeAccent)),
                         ],
                       ),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
+                        Text('₹${priceData['price']}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                         Text('${priceData['change']}%', style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: color,
+                          color: double.tryParse(priceData['change'].toString())?.isNegative == true 
+                              ? const Color(0xFFF97316) 
+                              : const Color(0xFF22C55E),
                         )),
-                        const Text('Live', style: TextStyle(fontSize: 11, color: Colors.white38)),
                       ],
                     ),
                   ],
