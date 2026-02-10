@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'portfolio_page.dart';
@@ -62,46 +63,48 @@ class _DashboardHomeState extends State<DashboardHome> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF050816), Color(0xFF111827)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
+      backgroundColor: const Color(0xFF050816),
+      body: Stack(
+        children: [
+          // Ambient Background
+          Positioned(top: -100, right: -50, child: _buildBgCircle(const Color(0xFF7C3AED), 300)),
+          Positioned(top: 200, left: -50, child: _buildBgCircle(const Color(0xFF0EA5E9), 200)),
+
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+              // Top bar with back button
               // Top bar with back button
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 child: Row(
                   children: [
-
                     const Expanded(
                       child: Text(
                         'Salary Pilot Dashboard',
                         style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -0.5,
+                          color: Colors.white,
                         ),
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: const Color(0xFF22C55E).withOpacity(0.2),
-                        border: Border.all(color: const Color(0xFF22C55E), width: 1),
+                        borderRadius: BorderRadius.circular(20),
+                        color: const Color(0xFF22C55E).withOpacity(0.15),
+                        border: Border.all(color: const Color(0xFF22C55E).withOpacity(0.5), width: 1),
                       ),
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.flight_takeoff, size: 14, color: Color(0xFF22C55E)),
-                          SizedBox(width: 4),
-                          Text('ON', style: TextStyle(fontSize: 11, color: Color(0xFF22C55E))),
+                          SizedBox(width: 6),
+                          Text('ON', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF22C55E))),
                         ],
                       ),
                     ),
@@ -152,21 +155,28 @@ class _DashboardHomeState extends State<DashboardHome> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20), // Reduced from 24
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(24),
                     color: Colors.white.withOpacity(0.03),
-                    border: Border.all(color: Colors.white12),
+                    border: Border.all(color: Colors.white.withOpacity(0.05)),
                   ),
                   child: Column(
                     children: [
-                      const Row(
+                      Row(
                         children: [
-                          Icon(Icons.pie_chart, color: Color(0xFF7C3AED), size: 20),
-                          SizedBox(width: 8),
-                          Text(
-                            'Current Allocation',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF7C3AED).withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(Icons.pie_chart, color: Color(0xFF7C3AED), size: 20),
+                          ),
+                          const SizedBox(width: 12),
+                          const Text(
+                            'CURRENT ALLOCATION',
+                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 1.1, color: Colors.white70),
                           ),
                         ],
                       ),
@@ -265,39 +275,39 @@ class _DashboardHomeState extends State<DashboardHome> {
                         onTap: () => _showInvestingModal(context),
                         child: Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: const Color(0xFFF97316).withOpacity(0.15),
-                            border: Border.all(color: const Color(0xFFF97316).withOpacity(0.4)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFFF97316).withOpacity(0.1),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
+                            borderRadius: BorderRadius.circular(16),
+                            color: const Color(0xFFF97316).withOpacity(0.1),
+                            border: Border.all(color: const Color(0xFFF97316).withOpacity(0.3)),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Row(
-                                children: [
-                                  Icon(Icons.trending_up, size: 16, color: Color(0xFFF97316)),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    '₹15,000 Investing (30%)',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFFF97316),
+                              // Left side: Icon + Text
+                              Flexible(
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.trending_up, size: 16, color: Color(0xFFF97316)),
+                                    const SizedBox(width: 8),
+                                    Flexible(
+                                      child: Text(
+                                        '₹15,000 Investing (30%)',
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFFF97316),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
+                              // Right side: APY + Arrow
                               Row(
                                 children: [
-                                  const Text('13.8% APY', style: TextStyle(fontSize: 13, color: Color(0xFFF97316))),
+                                  const Text('13.8% APY', style: TextStyle(fontSize: 12, color: Color(0xFFF97316))),
                                   const SizedBox(width: 8),
                                   const Icon(Icons.chevron_right, color: Color(0xFFF97316)),
                                 ],
@@ -320,13 +330,14 @@ class _DashboardHomeState extends State<DashboardHome> {
                   children: [
                     // AI Coach Alerts Section
                     const Padding(
-                      padding: EdgeInsets.only(left: 4, bottom: 8),
+                      padding: EdgeInsets.only(left: 4, bottom: 12),
                       child: Text(
-                        "AI Coach Alerts",
+                        "AI COACH ALERTS",
                         style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.1,
+                          color: Colors.white54,
                         ),
                       ),
                     ),
@@ -337,35 +348,39 @@ class _DashboardHomeState extends State<DashboardHome> {
                     // Next month rebalance
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(24),
                         gradient: LinearGradient(
                           colors: [const Color(0xFF7C3AED).withOpacity(0.9), const Color(0xFFEC4899).withOpacity(0.9)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
+                        boxShadow: [BoxShadow(color: const Color(0xFF7C3AED).withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10))],
                       ),
                       child: Column(
                         children: [
                           const Row(
                             children: [
-                              Icon(Icons.insights, color: Colors.white, size: 20),
-                              SizedBox(width: 8),
-                              Text('Next Month Optimizer', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
+                              Icon(Icons.insights, color: Colors.white, size: 24),
+                              SizedBox(width: 12),
+                              Text('Next Month Optimizer', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
                             ],
                           ),
                           const SizedBox(height: 12),
                           const Text(
                             '13.8% APY possible (+₹320 extra)',
-                            style: TextStyle(fontSize: 14, color: Colors.white70),
+                            style: TextStyle(fontSize: 15, color: Colors.white70),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 20),
                           SizedBox(
                             width: double.infinity,
-                            height: 44,
+                            height: 50,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                elevation: 0,
                               ),
                               onPressed: () {
                                 Navigator.push(
@@ -375,7 +390,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                               },
                               child: const Text(
                                 'Apply Next Month Plan',
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF7C3AED)),
+                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF7C3AED)),
                               ),
                             ),
                           ),
@@ -390,45 +405,26 @@ class _DashboardHomeState extends State<DashboardHome> {
             ],
           ),
         ),
+      ),
+    ],
+  ),
+);
+  }
+
+  Widget _buildBgCircle(Color color, double size) {
+    return ImageFiltered(
+      imageFilter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
+      child: Container(
+        width: size, height: size,
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.15),
+          shape: BoxShape.circle,
         ),
       ),
     );
   }
 
-  Widget _buildPerformanceCard({
-    required String title,
-    required String value,
-    required String change,
-    required String changePercent,
-    required Color color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.white.withOpacity(0.03),
-        border: Border.all(color: Colors.white12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: const TextStyle(fontSize: 12, color: Colors.white60)),
-          const SizedBox(height: 4),
-          Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Icon(Icons.trending_up, size: 16, color: color),
-              const SizedBox(width: 4),
-              Text(change, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: color)),
-              const SizedBox(width: 8),
-              Text(changePercent, style: TextStyle(fontSize: 12, color: Colors.white60)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+
 
   void _showInvestingModal(BuildContext context) {
     final priceService = PriceService();
@@ -452,12 +448,12 @@ class _DashboardHomeState extends State<DashboardHome> {
   }) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         color: Colors.white.withOpacity(0.03),
-        border: Border.all(color: Colors.white12),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10)],
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

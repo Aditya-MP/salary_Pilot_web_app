@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'dashboard_page.dart';
 import 'portfolio_page.dart';
@@ -208,17 +209,16 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
     final investingAmt = (salary * investing / 100).round();
 
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF050816), Color(0xFF111827)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          child: Column(
-            children: [
+      backgroundColor: const Color(0xFF050816),
+      body: Stack(
+        children: [
+          // Ambient Background
+          Positioned(top: -100, right: -100, child: _buildBgCircle(const Color(0xFF7C3AED), 300)),
+          Positioned(top: 200, left: -50, child: _buildBgCircle(const Color(0xFFEC4899), 250)),
+
+          SafeArea(
+            child: Column(
+              children: [
               // Top bar
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -417,6 +417,20 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
               ),
             ],
           ),
+        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBgCircle(Color color, double size) {
+    return ImageFiltered(
+      imageFilter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
+      child: Container(
+        width: size, height: size,
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.15),
+          shape: BoxShape.circle,
         ),
       ),
     );

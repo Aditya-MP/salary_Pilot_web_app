@@ -179,10 +179,10 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
         Text(
           title, 
           style: const TextStyle(
-            fontSize: 12, 
+            fontSize: 13, 
             fontWeight: FontWeight.w800, 
-            color: Colors.white54, 
-            letterSpacing: 1.2
+            color: Colors.white70, 
+            letterSpacing: 1.1
           )
         ),
         const SizedBox(width: 12),
@@ -194,7 +194,7 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
   Widget _buildModernHeroCard(Map<String, dynamic> item) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20), // Reduced radius
+        borderRadius: BorderRadius.circular(24), // Global standard
         gradient: LinearGradient(
           colors: [
             const Color(0xFF1E1B4B).withOpacity(0.9),
@@ -213,7 +213,7 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Padding(
@@ -319,17 +319,17 @@ class _NewsPageState extends State<NewsPage> with TickerProviderStateMixin {
 
   Widget _buildModernNewsTile(Map<String, dynamic> item, int index) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6), // Reduced vertical margin
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8), // Adjusted margin
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.03),
-        borderRadius: BorderRadius.circular(16), // Reduced radius
+        borderRadius: BorderRadius.circular(20), // Global standard
         border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: () {},
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           child: Padding(
             padding: const EdgeInsets.all(16), // Reduced padding (20->16)
             child: Row(

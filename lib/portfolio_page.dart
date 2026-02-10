@@ -114,7 +114,7 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
   Widget _buildSectionHeader(String title) {
     return Text(
       title,
-      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.white54, letterSpacing: 1.2),
+      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.white70, letterSpacing: 1.1),
     );
   }
 
