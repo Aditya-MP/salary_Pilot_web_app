@@ -58,6 +58,8 @@ class DashboardHome extends StatefulWidget {
 
 class _DashboardHomeState extends State<DashboardHome> {
   @override
+  int _selectedTimePeriod = 1; // 0: 1Y, 1: 3Y, 2: 5Y, 3: 10Y
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -214,51 +216,44 @@ class _DashboardHomeState extends State<DashboardHome> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      const Text(
-                        'Spending · Savings · Investing',
-                        style: TextStyle(fontSize: 12, color: Colors.white60),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildLegendItem('Spending', const Color(0xFF22C55E)),
+                          const SizedBox(width: 12),
+                          _buildLegendItem('Savings', const Color(0xFF0EA5E9)),
+                          const SizedBox(width: 12),
+                          _buildLegendItem('Investing', const Color(0xFFF97316)),
+                        ],
                       ),
 
                       const SizedBox(height: 16),
 
                       // Simple holdings growth chart
+                      // Comparison Bar Chart Section
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            _buildTimePeriodToggle(),
+                            const SizedBox(height: 16),
                             const Text(
-                              'Your invested growth',
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white),
+                              'Salary Pilot: AI-Optimized Growth Projection',
+                              style: TextStyle(fontSize: 13, color: Colors.white70),
                             ),
-                            const SizedBox(height: 8),
-                            _buildHoldingsLineChart(),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 16),
+                            _buildComparisonBarChart(),
+                            const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                _buildLegendItem("Reliance +24%", const Color(0xFF22C55E)),
-                                const SizedBox(width: 8),
-                                _buildLegendItem("Solana +28.6%", const Color(0xFF0EA5E9)),
-                                const SizedBox(width: 8),
-                                _buildLegendItem("Cardano +14.3%", const Color(0xFF7C3AED)),
+                                _buildLegendItem("Invested", const Color(0xFFEAB308)),
+                                const SizedBox(width: 16),
+                                _buildLegendItem("Profit", const Color(0xFF22C55E)),
+                                const SizedBox(width: 16),
+                                _buildLegendItem("Loss", const Color(0xFFF97316)),
                               ],
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                _buildLegendItem("SBI +7.5%", const Color(0xFFEC4899)),
-                                const SizedBox(width: 8),
-                                _buildLegendItem("Gold +6.7%", const Color(0xFFEAB308)),
-                                const SizedBox(width: 8),
-                                _buildLegendItem("Total +20.4%", const Color(0xFFF97316)),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            const Text(
-                              'Investment performance from day invested to current: All assets showing positive returns',
-                              style: TextStyle(fontSize: 11, color: Colors.white60),
                             ),
                           ],
                         ),
@@ -546,104 +541,135 @@ class _DashboardHomeState extends State<DashboardHome> {
     );
   }
 
-  Widget _buildHoldingsLineChart() {
-    // Investment timeline: Day invested (0) to current (5 months)
-    // Each asset starts from its actual investment day with real starting amounts
-    final relianceSpots = [
-      const FlSpot(0, 5000),  // Day invested: ₹5,000
-      const FlSpot(1, 5100),  // Month 1: +2%
-      const FlSpot(2, 5300),  // Month 2: +6%
-      const FlSpot(3, 5600),  // Month 3: +12%
-      const FlSpot(4, 5900),  // Month 4: +18%
-      const FlSpot(5, 6200),  // Current: +24%
-    ];
+  Widget _buildTimePeriodToggle() {
+    final periods = ['1M', '2M', '3M', '4M'];
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(periods.length, (index) {
+        final isSelected = _selectedTimePeriod == index;
+        return GestureDetector(
+          onTap: () => setState(() => _selectedTimePeriod = index),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: isSelected ? const Color(0xFF7C3AED) : Colors.transparent,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: isSelected ? const Color(0xFF7C3AED) : Colors.white24),
+            ),
+            child: Text(
+              periods[index],
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isSelected ? Colors.white : Colors.white60,
+              ),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildComparisonBarChart() {
+    // Mock Data based on Time Period for User Assets
+    // Assets: Reliance (Rel), Solana (Sol), Cardano (Ada), SBI (SBI), Gold (Gold)
+    // Base Invested Amounts:
+    // Rel: 5000, Sol: 3500, Ada: 2800, SBI: 2000, Gold: 300
     
-    final solanaSpots = [
-      const FlSpot(0, 3500),  // Day invested: ₹3,500
-      const FlSpot(1, 3600),  // Month 1: +2.9%
-      const FlSpot(2, 3800),  // Month 2: +8.6%
-      const FlSpot(3, 4000),  // Month 3: +14.3%
-      const FlSpot(4, 4200),  // Month 4: +20%
-      const FlSpot(5, 4500),  // Current: +28.6%
-    ];
+    // Multipliers for different time periods (Mocked for demo - Monthly)
+    // 1M: Rel 1.02, Sol 1.04, Ada 1.03, SBI 1.01, Gold 1.005
+    // 2M: Rel 1.05, Sol 1.10, Ada 1.08, SBI 1.03, Gold 1.01
+    // 3M: Rel 1.12, Sol 1.18, Ada 1.14, SBI 1.05, Gold 1.02
+    // 4M: Rel 1.24, Sol 1.28, Ada 1.20, SBI 1.07, Gold 1.05 (Current)
+
+    List<double> multipliers;
+    switch (_selectedTimePeriod) {
+      case 0: multipliers = [1.02, 1.04, 1.03, 1.01, 1.005]; break; // 1M
+      case 1: multipliers = [1.05, 1.10, 1.08, 1.03, 1.01]; break; // 2M
+      case 2: multipliers = [1.12, 1.18, 1.14, 1.05, 1.02]; break; // 3M
+      case 3: default: multipliers = [1.24, 1.28, 1.20, 1.075, 1.05]; break; // 4M
+    }
+
+    final investedAmounts = [5000.0, 3500.0, 2800.0, 2000.0, 300.0];
+    final titles = ['Rel', 'Sol', 'Ada', 'SBI', 'Gold'];
     
-    final cardanoSpots = [
-      const FlSpot(0, 2800),  // Day invested: ₹2,800
-      const FlSpot(1, 2900),  // Month 1: +3.6%
-      const FlSpot(2, 3000),  // Month 2: +7.1%
-      const FlSpot(3, 3100),  // Month 3: +10.7%
-      const FlSpot(4, 3150),  // Month 4: +12.5%
-      const FlSpot(5, 3200),  // Current: +14.3%
-    ];
-    
-    final sbiSpots = [
-      const FlSpot(0, 2000),  // Day invested: ₹2,000
-      const FlSpot(1, 2050),  // Month 1: +2.5%
-      const FlSpot(2, 2080),  // Month 2: +4%
-      const FlSpot(3, 2100),  // Month 3: +5%
-      const FlSpot(4, 2120),  // Month 4: +6%
-      const FlSpot(5, 2150),  // Current: +7.5%
-    ];
-    
-    final goldSpots = [
-      const FlSpot(0, 300),   // Day invested: ₹300
-      const FlSpot(1, 305),   // Month 1: +1.7%
-      const FlSpot(2, 310),   // Month 2: +3.3%
-      const FlSpot(3, 315),   // Month 3: +5%
-      const FlSpot(4, 318),   // Month 4: +6%
-      const FlSpot(5, 320),   // Current: +6.7%
-    ];
-    
-    final totalSpots = [
-      const FlSpot(0, 13600), // Total invested: ₹13,600
-      const FlSpot(1, 13955), // Month 1: +2.6%
-      const FlSpot(2, 14490), // Month 2: +6.5%
-      const FlSpot(3, 15115), // Month 3: +11.1%
-      const FlSpot(4, 15688), // Month 4: +15.4%
-      const FlSpot(5, 16370), // Current: +20.4%
-    ];
-    
-    // Feature #9: Next Month Plan (Prediction)
-    final predictionSpot = const FlSpot(6, 17500); // AI Predicted
+    // Calculate max Y for scaling
+    double maxY = 0;
+    for (int i = 0; i < 5; i++) {
+      double currentVal = investedAmounts[i] * multipliers[i];
+      if (currentVal > maxY) maxY = currentVal;
+    }
 
     return SizedBox(
-      height: 200,
-      child: LineChart(
-        LineChartData(
-          minX: 0, maxX: 6, minY: 200, maxY: 18000,
+      height: 220,
+      child: BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          maxY: maxY * 1.3, // Extra space for labels
+          barTouchData: BarTouchData(enabled: false), // Disable touch for cleaner look
           titlesData: FlTitlesData(
-            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40, getTitlesWidget: (v, m) => Text('₹${v ~/ 1000}k', style: const TextStyle(fontSize: 10, color: Colors.white60)))),
-            bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: (v, m) {
-              const labels = ['Start', 'M1', 'M2', 'M3', 'M4', 'Now', 'Fut']; // Added 'Fut'
-              if (v.toInt() >= labels.length) return const SizedBox();
-              return Text(labels[v.toInt()], style: const TextStyle(fontSize: 10, color: Colors.white60));
-            })),
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          ),
-          gridData: FlGridData(show: true, drawVerticalLine: false, horizontalInterval: 2000, getDrawingHorizontalLine: (v) => FlLine(color: Colors.white12, strokeWidth: 1)),
-          borderData: FlBorderData(show: true, border: const Border.fromBorderSide(BorderSide(color: Colors.white24))),
-          lineBarsData: [
-            LineChartBarData(spots: relianceSpots, isCurved: true, color: const Color(0xFF22C55E), barWidth: 2.5, dotData: const FlDotData(show: false)),
-            LineChartBarData(spots: solanaSpots, isCurved: true, color: const Color(0xFF0EA5E9), barWidth: 2.5, dotData: const FlDotData(show: false)),
-            LineChartBarData(spots: cardanoSpots, isCurved: true, color: const Color(0xFF7C3AED), barWidth: 2.5, dotData: const FlDotData(show: false)),
-            LineChartBarData(spots: sbiSpots, isCurved: true, color: const Color(0xFFEC4899), barWidth: 2, dotData: const FlDotData(show: false)),
-            LineChartBarData(spots: goldSpots, isCurved: true, color: const Color(0xFFEAB308), barWidth: 2, dotData: const FlDotData(show: false)),
-            LineChartBarData(spots: totalSpots, isCurved: true, color: const Color(0xFFF97316), barWidth: 4, dotData: const FlDotData(show: true)),
-            
-            // Feature #9: Prediction Line (Dashed)
-            LineChartBarData(
-              spots: [totalSpots.last, predictionSpot],
-              isCurved: true,
-              color: const Color(0xFFF97316).withOpacity(0.6),
-              barWidth: 3,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true, getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(radius: 4, color: const Color(0xFFF97316), strokeWidth: 0)),
-              dashArray: [5, 5], // Dashed line
+            show: true,
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (value, meta) {
+                  if (value.toInt() >= titles.length) return const SizedBox();
+                  int index = value.toInt();
+                  double currentVal = investedAmounts[index] * multipliers[index];
+                  double profitPercent = (multipliers[index] - 1) * 100;
+                  
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Column(
+                      children: [
+                        Text(titles[index], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                        const SizedBox(height: 2),
+                        Text('₹${currentVal.round()}', style: const TextStyle(color: Colors.white70, fontSize: 10)),
+                        Text('+${profitPercent.toStringAsFixed(1)}%', style: const TextStyle(color: Color(0xFF22C55E), fontSize: 10, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  );
+                },
+                reservedSize: 60,
+              ),
             ),
-          ],
+            leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+          gridData: FlGridData(
+            show: true,
+            drawVerticalLine: false,
+            horizontalInterval: maxY / 4, // Dynamic grid lines
+            getDrawingHorizontalLine: (value) => FlLine(color: Colors.white10, strokeWidth: 1),
+          ),
+          borderData: FlBorderData(show: false),
+          barGroups: List.generate(5, (index) {
+             double invested = investedAmounts[index];
+             double profit = invested * (multipliers[index] - 1);
+             return _buildBarGroup(index, invested, profit);
+          }),
         ),
       ),
+    );
+  }
+
+  BarChartGroupData _buildBarGroup(int x, double invested, double profit) {
+    return BarChartGroupData(
+      x: x,
+      barRods: [
+        BarChartRodData(
+          toY: invested + profit,
+          width: 20, // Slightly thinner bars to fit 5 items
+          color: const Color(0xFF22C55E), // Profit color (Green)
+          rodStackItems: [
+            BarChartRodStackItem(0, invested, const Color(0xFFEAB308)), // Invested color (Yellow)
+            BarChartRodStackItem(invested, invested + profit, const Color(0xFF22C55E)), // Profit
+          ],
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ],
     );
   }
 
@@ -880,16 +906,32 @@ class _LiveInvestingModalState extends State<LiveInvestingModal> {
                                   typeColor = Colors.white54;
                                 }
                                 
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: typeColor.withOpacity(0.15),
-                                  ),
-                                  child: Text(
-                                    typeLabel,
-                                    style: TextStyle(fontSize: 11, color: typeColor, fontWeight: FontWeight.w600),
-                                  ),
+                                return Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: typeColor.withOpacity(0.15),
+                                      ),
+                                      child: Text(
+                                        typeLabel,
+                                        style: TextStyle(fontSize: 11, color: typeColor, fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.orange.withOpacity(0.15),
+                                      ),
+                                      child: Text(
+                                        name.contains('Solana') || name.contains('Cardano') ? 'Tax: 30% + 1% TDS' : 'Tax: 12.5% LTCG',
+                                        style: const TextStyle(fontSize: 10, color: Colors.orange, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
                                 );
                               },
                             ),

@@ -89,6 +89,19 @@ class _InvestingCompletePageState extends State<InvestingCompletePage> {
                 ),
                 textAlign: TextAlign.center,
               ),
+              const SizedBox(height: 8),
+              // NEW: Sustainability Badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF22C55E).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Text(
+                  "玄 SUSTAINABILITY SCORE: 92/100",
+                  style: TextStyle(fontSize: 11, color: Color(0xFF22C55E), fontWeight: FontWeight.bold),
+                ),
+              ),
               const SizedBox(height: 40),
               
               // Live transaction cards
@@ -101,6 +114,7 @@ class _InvestingCompletePageState extends State<InvestingCompletePage> {
                       'ESG Pool',
                       '₹6,000',
                       const Color(0xFF7C3AED),
+                      taxInfo: 'Tax: 30% VDA',
                     ),
                     const SizedBox(height: 12),
                     _buildTxCard(
@@ -108,6 +122,7 @@ class _InvestingCompletePageState extends State<InvestingCompletePage> {
                       'AI Agent Fees',
                       '₹45',
                       const Color(0xFFF97316),
+                      taxInfo: 'GST: 18% Included',
                     ),
                     const SizedBox(height: 12),
                     _buildTxCard(
@@ -115,6 +130,7 @@ class _InvestingCompletePageState extends State<InvestingCompletePage> {
                       'Green Lending',
                       '₹4,650',
                       const Color(0xFF0EA5E9),
+                      taxInfo: 'Tax: 30% VDA',
                     ),
                   ],
                 ),
@@ -161,7 +177,7 @@ class _InvestingCompletePageState extends State<InvestingCompletePage> {
     );
   }
 
-  Widget _buildTxCard(String network, String action, String amount, Color color) {
+  Widget _buildTxCard(String network, String action, String amount, Color color, {String? taxInfo}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -190,9 +206,28 @@ class _InvestingCompletePageState extends State<InvestingCompletePage> {
               ],
             ),
           ),
-          Text(
-            amount,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                amount,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color),
+              ),
+              if (taxInfo != null) ...[
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    taxInfo,
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color.withOpacity(0.9)),
+                  ),
+                ),
+              ],
+            ],
           ),
         ],
       ),

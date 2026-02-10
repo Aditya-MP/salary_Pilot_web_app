@@ -11,11 +11,14 @@ class AIService {
     required List<String> holdings,
   }) async {
     final prompt = """
-    Act as 4 collaborating AI Agents for a salary optimizer app:
+    Act as 4 collaborating AI Agents optimized for AMD Ryzen AI NPU inference:
     1. Risk Profiler: Analyze salary $salary and risk score $riskLevel.
     2. Portfolio Builder: Suggest 5 sustainable assets (India stocks/ETFs/Crypto).
-    3. Tax Expert: Explain tax (LTCG/STCG) for these assets.
+    3. Tax Expert: Explain tax (LTCG/STCG) for these assets based on Finance Bill 2026.
     4. Market News Forecaster: Predict next month's bull/bear run in %.
+
+    IMPORTANT: Ensure the 'Portfolio Builder' prioritizes 'Sustainable Financing' assets 
+    as per the user's goal for India's 2070 Net-Zero target.
 
     Format the response as a JSON object with keys: 
     'split': {'spend': 40, 'save': 30, 'invest': 30},
