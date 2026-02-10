@@ -296,6 +296,8 @@ class _LearnPageState extends State<LearnPage> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
+                const Icon(Icons.chevron_right, color: Colors.white24),
               ],
             ),
           ),
