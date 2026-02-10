@@ -5,7 +5,13 @@ import 'investing_complete_page.dart';
 
 class TripleGuardModal extends StatefulWidget {
   final bool isStagingActive;
-  const TripleGuardModal({super.key, this.isStagingActive = false});
+  final double monthlyInvestAmount;
+
+  const TripleGuardModal({
+    super.key, 
+    this.isStagingActive = false,
+    this.monthlyInvestAmount = 0,
+  });
 
   @override
   State<TripleGuardModal> createState() => _TripleGuardModalState();
@@ -93,9 +99,11 @@ class _TripleGuardModalState extends State<TripleGuardModal> {
         const Text("Future of Work: Mental Safeguard", // Themed Title
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
         const SizedBox(height: 12),
-        const Text(
-          "Protecting your hard-earned salary from decision-fatigue and workplace stress[cite: 22].",
-          textAlign: TextAlign.center, style: TextStyle(color: Colors.white60, fontSize: 13),
+        Text(
+          widget.isStagingActive 
+              ? "You are about to deploy a 3-month bulk sum (₹${(widget.monthlyInvestAmount * 3).toStringAsFixed(0)}). This high-stakes monitoring is active."
+              : "Protecting your hard-earned salary from decision-fatigue and workplace stress[cite: 22].",
+          textAlign: TextAlign.center, style: const TextStyle(color: Colors.white60, fontSize: 13),
         ),
         const SizedBox(height: 20),
         if (!isCoolingDown) ...[
@@ -149,13 +157,15 @@ class _TripleGuardModalState extends State<TripleGuardModal> {
         const Text("3. Bio-Financial Streak Protector",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
         const SizedBox(height: 12),
-        const Text(
-          "You have a 5-month Gold Streak. Breaking this split voids your 0.9 ton CO₂ offset contribution for this year.",
-          textAlign: TextAlign.center, style: TextStyle(color: Colors.white70),
+        Text(
+          widget.isStagingActive
+              ? "Completing this Quarterly Pulse awards you the 'Diamond Streak'. You are 1 of 5 peers attempting this."
+              : "You have a 5-month Gold Streak. Breaking this split voids your 0.9 ton CO₂ offset contribution for this year.",
+          textAlign: TextAlign.center, style: const TextStyle(color: Colors.white70),
         ),
         const SizedBox(height: 12),
-        const Text("🔥 DON'T BREAK THE HABIT",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.green)),
+        Text(widget.isStagingActive ? "💎 DIAMOND TIER IMMINENT" : "🔥 DON'T BREAK THE HABIT",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: widget.isStagingActive ? Colors.cyanAccent : Colors.green)),
       ],
     );
   }
@@ -198,10 +208,13 @@ class _TripleGuardModalState extends State<TripleGuardModal> {
           setState(() => step++);
         } else {
           Navigator.pop(context);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => InvestingCompletePage(isStagingActive: widget.isStagingActive)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => InvestingCompletePage(
+            isStagingActive: widget.isStagingActive,
+            monthlyInvestAmount: widget.monthlyInvestAmount,
+          )));
         }
       },
-      child: Text(isCoolingDown ? "Wait for Clarity..." : (step < 3 ? "Analyze Next Guard" : "Secure Sustainable Wealth"),
+      child: Text(isCoolingDown ? "Wait for Clarity..." : (step < 3 ? "Analyze Next Guard" : (widget.isStagingActive ? "Verify Bulk Execution" : "Secure Sustainable Wealth")),
       style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
     ),
   );

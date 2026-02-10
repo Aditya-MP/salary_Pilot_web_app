@@ -70,6 +70,15 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
       spending = (spending / total) * 100;
       savings = (savings / total) * 100;
       investing = (investing / total) * 100;
+      
+      // Auto-update risk profile based on investing allocation
+      if (investing >= 45) {
+        selectedRiskProfile = "Aggressive";
+      } else if (investing >= 25) {
+        selectedRiskProfile = "Balanced";
+      } else {
+        selectedRiskProfile = "Conservative";
+      }
     });
   }
 
@@ -77,7 +86,18 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
     final isSelected = selectedRiskProfile == label;
     return Expanded(
       child: GestureDetector(
-        onTap: () => setState(() => selectedRiskProfile = label),
+        onTap: () {
+          setState(() {
+            selectedRiskProfile = label;
+            if (label == "Conservative") {
+              spending = 50; savings = 40; investing = 10;
+            } else if (label == "Balanced") {
+              spending = 40; savings = 30; investing = 30;
+            } else if (label == "Aggressive") {
+              spending = 30; savings = 20; investing = 50;
+            }
+          });
+        },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 8),
@@ -338,37 +358,10 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
 
               const SizedBox(height: 20),
 
-              // Quarterly Pulse (Staging) Toggle
+              // Strategy Selector (Replaces Pulse Toggle)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: isStagingActive ? const Color(0xFF7C3AED).withOpacity(0.1) : Colors.white.withOpacity(0.05),
-                    border: Border.all(color: isStagingActive ? const Color(0xFF7C3AED) : Colors.white12),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.timer_outlined, color: Color(0xFF7C3AED)),
-                      const SizedBox(width: 12),
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Quarterly Pulse (Staging)", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                            Text("Save for 3 months, invest in bulk.", style: TextStyle(color: Colors.white54, fontSize: 11)),
-                          ],
-                        ),
-                      ),
-                      Switch(
-                        value: isStagingActive,
-                        activeColor: const Color(0xFF7C3AED),
-                        onChanged: (val) => setState(() => isStagingActive = val),
-                      ),
-                    ],
-                  ),
-                ),
+                child: _buildStrategySelector(),
               ),
 
               const SizedBox(height: 20),
@@ -433,12 +426,18 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
                       ),
                     ),
                     onPressed: () {
+                      // Calculate investing amount
+                      final investingAmt = (salary * investing / 100).round().toDouble();
+                      
                       // Show Triple Guard Modal before proceeding
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
-                        builder: (context) => TripleGuardModal(isStagingActive: isStagingActive),
+                        builder: (context) => TripleGuardModal(
+                          isStagingActive: isStagingActive,
+                          monthlyInvestAmount: investingAmt,
+                        ),
                       );
                     },
                     child: const Text(
@@ -527,6 +526,41 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStrategySelector() {
+    return Row(
+      children: [
+        _strategyCard("Instant Strike", "Invest monthly", Icons.bolt, !isStagingActive),
+        const SizedBox(width: 12),
+        _strategyCard("Quarterly Pulse", "3-month bulk build", Icons.hourglass_bottom, isStagingActive),
+      ],
+    );
+  }
+
+  Widget _strategyCard(String title, String sub, IconData icon, bool selected) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => isStagingActive = (title == "Quarterly Pulse")),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: selected ? const Color(0xFF7C3AED).withOpacity(0.2) : Colors.white.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: selected ? const Color(0xFF7C3AED) : Colors.white10),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: selected ? const Color(0xFF7C3AED) : Colors.white24),
+              const SizedBox(height: 8),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              Text(sub, style: const TextStyle(fontSize: 10, color: Colors.white38), textAlign: TextAlign.center),
+            ],
+          ),
+        ),
       ),
     );
   }

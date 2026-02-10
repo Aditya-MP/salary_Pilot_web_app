@@ -8,7 +8,13 @@ import 'news_page.dart';
 
 class DashboardPage extends StatefulWidget {
   final bool isStagingActive;
-  const DashboardPage({super.key, this.isStagingActive = false});
+  final double monthlyInvestAmount;
+
+  const DashboardPage({
+    super.key, 
+    this.isStagingActive = false,
+    this.monthlyInvestAmount = 0,
+  });
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -27,7 +33,10 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     super.initState();
     _pages = [
-      DashboardHome(isStagingActive: widget.isStagingActive),
+      DashboardHome(
+        isStagingActive: widget.isStagingActive,
+        monthlyInvestAmount: widget.monthlyInvestAmount,
+      ),
       const PortfolioPage(),
       const NewsPage(),
       const LearnPage(),
@@ -58,7 +67,13 @@ class _DashboardPageState extends State<DashboardPage> {
 
 class DashboardHome extends StatefulWidget {
   final bool isStagingActive;
-  const DashboardHome({super.key, this.isStagingActive = false});
+  final double monthlyInvestAmount;
+
+  const DashboardHome({
+    super.key, 
+    this.isStagingActive = false,
+    this.monthlyInvestAmount = 0,
+  });
 
   @override
   State<DashboardHome> createState() => _DashboardHomeState();
@@ -126,8 +141,33 @@ class _DashboardHomeState extends State<DashboardHome> {
                   stream: PriceService().priceStream,
                   builder: (context, snapshot) {
                     final totalPrices = snapshot.data ?? PriceService().getCurrentPrices();
-                    final totalValue = totalPrices.values.fold<double>(0, (sum, data) => sum + (data['price'] as num).toDouble());
-                    final totalChange = totalPrices.values.fold<double>(0, (sum, data) => sum + (double.tryParse(data['change'].toString()) ?? 0));
+                    double totalValue = 0.0;
+                    double totalChange = 0.0;
+                    
+                    if (totalPrices.isNotEmpty) {
+                      for (var data in totalPrices.values) {
+                        try {
+                           // Safely extract price
+                           final priceVal = data['price'];
+                           if (priceVal != null && priceVal is num) {
+                             totalValue += priceVal.toDouble();
+                           }
+                           
+                           // Safely extract change
+                           final changeVal = data['change'];
+                           if (changeVal != null) {
+                             if (changeVal is num) {
+                               totalChange += changeVal.toDouble();
+                             } else if (changeVal is String) {
+                               totalChange += (double.tryParse(changeVal) ?? 0.0);
+                             }
+                           }
+                        } catch (e) {
+                          // Ignore processing errors for individual items to prevent crash
+                          print("Error processing asset data: $e");
+                        }
+                      }
+                    }
                     
                     return Row(
                       children: [
@@ -354,7 +394,7 @@ class _DashboardHomeState extends State<DashboardHome> {
 
                     // Quarterly Pulse (Staging) Progress
                     if (widget.isStagingActive) ...[
-                      _buildStagingProgressCard(),
+                      _buildStagingVault(),
                       const SizedBox(height: 24),
                     ],
 
@@ -439,6 +479,144 @@ class _DashboardHomeState extends State<DashboardHome> {
 
 
 
+  Widget buildAICoachInsights() {
+    return Column(
+      children: [
+        // 1. Tax Expert
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFF7C3AED).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFF7C3AED).withOpacity(0.3)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.receipt_long, color: Color(0xFF7C3AED)),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("TAX HARVESTING EXPERT", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF7C3AED))),
+                    SizedBox(height: 4),
+                    Text("Save ₹12,500 in LTCG taxes by booking profit in 'Reliance Green' before March 31.", style: TextStyle(color: Colors.white70, fontSize: 13)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        
+        // 2. Risk Alert
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF97316).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFFF97316).withOpacity(0.3)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: Color(0xFFF97316)),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("PORTFOLIO RISK ALERT", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFFF97316))),
+                    SizedBox(height: 4),
+                    Text("Solar sector volatility is high (VIX > 24). Recommended: Hold current positions, do not buy.", style: TextStyle(color: Colors.white70, fontSize: 13)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        
+        // 3. SEBI / Regulatory
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0EA5E9).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFF0EA5E9).withOpacity(0.3)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.verified_user_outlined, color: Color(0xFF0EA5E9)),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("SEBI COMPLIANCE CHECK", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF0EA5E9))),
+                    SizedBox(height: 4),
+                    Text("Your portfolio is 100% compliant with new SEBI mid-cap allocation rules for FY 2026.", style: TextStyle(color: Colors.white70, fontSize: 13)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildAISentimentBadge(String assetName) {
+    // Mock logic for demo
+    bool isBullish = assetName.contains('Green') || assetName.contains('Solar');
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: isBullish ? const Color(0xFF22C55E).withOpacity(0.2) : const Color(0xFFF97316).withOpacity(0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isBullish ? Icons.trending_up : Icons.trending_flat,
+            size: 12,
+            color: isBullish ? const Color(0xFF22C55E) : const Color(0xFFF97316),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            isBullish ? "AI Bullish" : "AI Neutral",
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: isBullish ? const Color(0xFF22C55E) : const Color(0xFFF97316),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionChip(String label, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: color),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showInvestingModal(BuildContext context) {
     final priceService = PriceService();
     
@@ -452,34 +630,62 @@ class _DashboardHomeState extends State<DashboardHome> {
     );
   }
 
-  Widget _buildStagingProgressCard() {
+  Widget _buildStagingVault() {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(horizontal: 0),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFF0EA5E9).withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF0EA5E9).withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(24),
+        gradient: const LinearGradient(colors: [Color(0xFF0EA5E9), Color(0xFF2563EB)]),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF2563EB).withOpacity(0.3),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("QUARTERLY PULSE PROGRESS", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF0EA5E9))),
-              Text("66% Done", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF0EA5E9).withOpacity(0.8))),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("STAGING VAULT", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold, fontSize: 11)),
+                  const SizedBox(height: 4),
+                  Text("₹${(widget.monthlyInvestAmount * 2).toStringAsFixed(0)} Saved", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 24)),
+                ],
+              ),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: CircularProgressIndicator(
+                      value: 0.66,
+                      strokeWidth: 6,
+                      backgroundColor: Colors.white24,
+                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                  const Text("M2", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ],
+              ),
             ],
           ),
-          const SizedBox(height: 12),
-          LinearProgressIndicator(
-            value: 0.66, // Simulated Month 2 of 3
-            backgroundColor: Colors.white10,
-            color: const Color(0xFF0EA5E9),
-            minHeight: 6,
-            borderRadius: BorderRadius.circular(3),
+          const Divider(color: Colors.white24, height: 32),
+          Row(
+            children: [
+              const Icon(Icons.auto_awesome, color: Colors.white, size: 16),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text("NPU Prediction: ₹${(widget.monthlyInvestAmount * 3 / 1000).toStringAsFixed(0)}k target reachable in 28 days.", style: const TextStyle(color: Colors.white, fontSize: 12)),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          const Text("NPU Suggestion: Keep staging. Target bulk split in 14 days.", style: TextStyle(fontSize: 12, color: Colors.white70)),
         ],
       ),
     );
@@ -522,66 +728,6 @@ class _DashboardHomeState extends State<DashboardHome> {
     );
   }
 
-  Widget buildAICoachInsights() {
-    final insights = [
-      {"icon": Icons.account_balance, "title": "Tax Tip", "desc": "Hold for 12m to save 7.5% tax (LTCG).", "color": const Color(0xFFF97316)},
-      {"icon": Icons.gavel, "title": "SEBI Rule", "desc": "Diversification is mandatory for low-risk profiles.", "color": const Color(0xFF0EA5E9)},
-      {"icon": Icons.warning, "title": "Risk Alert", "desc": "Reliance Green has high volatility this week.", "color": Colors.red},
-    ];
-
-    return SizedBox(
-      height: 120,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        itemCount: insights.length,
-        itemBuilder: (context, index) => Container(
-          width: 200,
-          margin: const EdgeInsets.only(right: 12),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: (insights[index]['color'] as Color).withOpacity(0.3)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(insights[index]['icon'] as IconData, color: insights[index]['color'] as Color, size: 20),
-              const SizedBox(height: 8),
-              Text(insights[index]['title'] as String, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-              Text(insights[index]['desc'] as String, style: const TextStyle(color: Colors.white60, fontSize: 11), maxLines: 2),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildAISentimentBadge(String assetName) {
-    // In a real app, this comes from AIService.getNewsImpact()
-    bool isBullish = assetName.contains("Solar") || assetName.contains("Green") || assetName.contains("Reliance");
-    
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: isBullish ? const Color(0xFF22C55E).withOpacity(0.2) : Colors.red.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: isBullish ? const Color(0xFF22C55E) : Colors.red, width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(isBullish ? Icons.trending_up : Icons.trending_down, size: 12, color: isBullish ? const Color(0xFF22C55E) : Colors.red),
-          const SizedBox(width: 4),
-          Text(
-            isBullish ? 'AI: BULLISH' : 'AI: BEARISH',
-            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isBullish ? const Color(0xFF22C55E) : Colors.red),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildTimePeriodToggle() {
     final periods = ['1M', '2M', '3M', '4M'];
@@ -901,7 +1047,8 @@ class _LiveInvestingModalState extends State<LiveInvestingModal> {
                 final name = asset['name']!;
                 final priceData = currentPrices[name] ?? {'price': 0, 'change': '0'};
                 
-                final isPositive = double.tryParse(priceData['change'])?.isNegative != true;
+                final changeStr = priceData['change']?.toString() ?? '0';
+                final isPositive = (double.tryParse(changeStr)?.isNegative ?? false) == false;
                 final color = isPositive ? const Color(0xFF22C55E) : const Color(0xFFF97316);
                 
                 return Container(

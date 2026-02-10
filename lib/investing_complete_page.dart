@@ -4,7 +4,13 @@ import 'dashboard_page.dart';
 
 class InvestingCompletePage extends StatefulWidget {
   final bool isStagingActive;
-  const InvestingCompletePage({super.key, this.isStagingActive = false});
+  final double monthlyInvestAmount;
+
+  const InvestingCompletePage({
+    super.key, 
+    this.isStagingActive = false,
+    this.monthlyInvestAmount = 0,
+  });
 
   @override
   State<InvestingCompletePage> createState() => _InvestingCompletePageState();
@@ -18,7 +24,10 @@ class _InvestingCompletePageState extends State<InvestingCompletePage> {
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => DashboardPage(isStagingActive: widget.isStagingActive)),
+        MaterialPageRoute(builder: (context) => DashboardPage(
+          isStagingActive: widget.isStagingActive,
+          monthlyInvestAmount: widget.monthlyInvestAmount,
+        )),
       );
     });
   }
@@ -72,9 +81,9 @@ class _InvestingCompletePageState extends State<InvestingCompletePage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
-              const Text(
-                '₹15,000 invested across 5 assets',
-                style: TextStyle(
+              Text(
+                '₹${widget.monthlyInvestAmount.round()} invested across 5 assets',
+                style: const TextStyle(
                   fontSize: 16,
                   color: Colors.white70,
                 ),
@@ -158,7 +167,10 @@ class _InvestingCompletePageState extends State<InvestingCompletePage> {
                         onPressed: () {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => DashboardPage(isStagingActive: widget.isStagingActive)),
+                            MaterialPageRoute(builder: (context) => DashboardPage(
+                              isStagingActive: widget.isStagingActive,
+                              monthlyInvestAmount: widget.monthlyInvestAmount,
+                            )),
                           );
                         },
                         child: const Text(

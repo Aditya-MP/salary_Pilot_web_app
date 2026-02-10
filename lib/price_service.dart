@@ -39,7 +39,7 @@ class PriceService {
         
         updatedPrices[name] = {
           'price': newPrice.round(),
-          'change': newChange.toStringAsFixed(1),
+          'change': double.parse(newChange.toStringAsFixed(1)), // Store as double
         };
       });
       
@@ -57,7 +57,7 @@ class PriceService {
     _assets.forEach((name, data) {
       prices[name] = {
         'price': data['price']!.round(),
-        'change': data['change'].toStringAsFixed(1),
+        'change': double.parse(data['change'].toStringAsFixed(1)),
       };
     });
     return prices;

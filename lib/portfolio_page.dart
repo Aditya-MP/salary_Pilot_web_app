@@ -239,7 +239,8 @@ class _PortfolioPageState extends State<PortfolioPage> with TickerProviderStateM
                 taxColor = Colors.white54;
               }
 
-              final isPositive = double.tryParse(priceData['change'].toString())?.isNegative != true;
+              final changeStr = priceData['change']?.toString() ?? '0';
+              final isPositive = (double.tryParse(changeStr)?.isNegative ?? false) == false;
               final changeColor = isPositive ? const Color(0xFF22C55E) : const Color(0xFFEF4444);
 
               return Container(
