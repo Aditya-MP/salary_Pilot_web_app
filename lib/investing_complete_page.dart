@@ -3,7 +3,8 @@ import 'dart:async';
 import 'dashboard_page.dart';
 
 class InvestingCompletePage extends StatefulWidget {
-  const InvestingCompletePage({super.key});
+  final bool isStagingActive;
+  const InvestingCompletePage({super.key, this.isStagingActive = false});
 
   @override
   State<InvestingCompletePage> createState() => _InvestingCompletePageState();
@@ -17,7 +18,7 @@ class _InvestingCompletePageState extends State<InvestingCompletePage> {
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const DashboardPage()),
+        MaterialPageRoute(builder: (context) => DashboardPage(isStagingActive: widget.isStagingActive)),
       );
     });
   }
@@ -157,7 +158,7 @@ class _InvestingCompletePageState extends State<InvestingCompletePage> {
                         onPressed: () {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const DashboardPage()),
+                            MaterialPageRoute(builder: (context) => DashboardPage(isStagingActive: widget.isStagingActive)),
                           );
                         },
                         child: const Text(

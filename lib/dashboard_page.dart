@@ -7,7 +7,8 @@ import 'learn_page.dart';
 import 'news_page.dart';
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+  final bool isStagingActive;
+  const DashboardPage({super.key, this.isStagingActive = false});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -19,12 +20,19 @@ class _DashboardPageState extends State<DashboardPage> {
   // Pages for the navigation
   // Note: We use indexed stack or simple switching. 
   // PortfolioPage, NewsPage, LearnPage need to be imported.
-  final List<Widget> _pages = [
-    const DashboardHome(),
-    const PortfolioPage(),
-    const NewsPage(),
-    const LearnPage(),
-  ];
+  // Pages for the navigation
+  late List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      DashboardHome(isStagingActive: widget.isStagingActive),
+      const PortfolioPage(),
+      const NewsPage(),
+      const LearnPage(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +56,9 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
-
-
 class DashboardHome extends StatefulWidget {
-  const DashboardHome({super.key});
+  final bool isStagingActive;
+  const DashboardHome({super.key, this.isStagingActive = false});
 
   @override
   State<DashboardHome> createState() => _DashboardHomeState();
@@ -345,6 +352,12 @@ class _DashboardHomeState extends State<DashboardHome> {
 
                     const SizedBox(height: 24),
 
+                    // Quarterly Pulse (Staging) Progress
+                    if (widget.isStagingActive) ...[
+                      _buildStagingProgressCard(),
+                      const SizedBox(height: 24),
+                    ],
+
                     // Next month rebalance
                     Container(
                       width: double.infinity,
@@ -435,6 +448,39 @@ class _DashboardHomeState extends State<DashboardHome> {
       backgroundColor: Colors.transparent,
       builder: (context) => LiveInvestingModal(
         priceService: priceService,
+      ),
+    );
+  }
+
+  Widget _buildStagingProgressCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0EA5E9).withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFF0EA5E9).withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("QUARTERLY PULSE PROGRESS", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF0EA5E9))),
+              Text("66% Done", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF0EA5E9).withOpacity(0.8))),
+            ],
+          ),
+          const SizedBox(height: 12),
+          LinearProgressIndicator(
+            value: 0.66, // Simulated Month 2 of 3
+            backgroundColor: Colors.white10,
+            color: const Color(0xFF0EA5E9),
+            minHeight: 6,
+            borderRadius: BorderRadius.circular(3),
+          ),
+          const SizedBox(height: 12),
+          const Text("NPU Suggestion: Keep staging. Target bulk split in 14 days.", style: TextStyle(fontSize: 12, color: Colors.white70)),
+        ],
       ),
     );
   }

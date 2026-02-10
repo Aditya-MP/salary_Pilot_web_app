@@ -44,6 +44,7 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
   double spending = 50;
   double savings = 20;
   double investing = 30;
+  bool isStagingActive = false; // New State Variable
   final double salary = 50000;
   String selectedRiskProfile = "Balanced"; // Default Risk Profile
 
@@ -337,6 +338,41 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
 
               const SizedBox(height: 20),
 
+              // Quarterly Pulse (Staging) Toggle
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: isStagingActive ? const Color(0xFF7C3AED).withOpacity(0.1) : Colors.white.withOpacity(0.05),
+                    border: Border.all(color: isStagingActive ? const Color(0xFF7C3AED) : Colors.white12),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.timer_outlined, color: Color(0xFF7C3AED)),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Quarterly Pulse (Staging)", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                            Text("Save for 3 months, invest in bulk.", style: TextStyle(color: Colors.white54, fontSize: 11)),
+                          ],
+                        ),
+                      ),
+                      Switch(
+                        value: isStagingActive,
+                        activeColor: const Color(0xFF7C3AED),
+                        onChanged: (val) => setState(() => isStagingActive = val),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
               // Splits
               Expanded(
                 child: Padding(
@@ -402,7 +438,7 @@ class _SalarySplitPageState extends State<SalarySplitPage> {
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
-                        builder: (context) => const TripleGuardModal(),
+                        builder: (context) => TripleGuardModal(isStagingActive: isStagingActive),
                       );
                     },
                     child: const Text(

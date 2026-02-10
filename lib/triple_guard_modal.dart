@@ -4,7 +4,8 @@ import 'dart:math';
 import 'investing_complete_page.dart';
 
 class TripleGuardModal extends StatefulWidget {
-  const TripleGuardModal({super.key});
+  final bool isStagingActive;
+  const TripleGuardModal({super.key, this.isStagingActive = false});
 
   @override
   State<TripleGuardModal> createState() => _TripleGuardModalState();
@@ -197,7 +198,7 @@ class _TripleGuardModalState extends State<TripleGuardModal> {
           setState(() => step++);
         } else {
           Navigator.pop(context);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const InvestingCompletePage()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => InvestingCompletePage(isStagingActive: widget.isStagingActive)));
         }
       },
       child: Text(isCoolingDown ? "Wait for Clarity..." : (step < 3 ? "Analyze Next Guard" : "Secure Sustainable Wealth"),

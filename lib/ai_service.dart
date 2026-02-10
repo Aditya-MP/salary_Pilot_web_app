@@ -16,6 +16,8 @@ class AIService {
     2. Portfolio Builder: Suggest 5 sustainable assets (India stocks/ETFs/Crypto).
     3. Tax Expert: Explain tax (LTCG/STCG) for these assets based on Finance Bill 2026.
     4. Market News Forecaster: Predict next month's bull/bear run in %.
+    5. Staging Orchestrator: If staging is ACTIVE, route 'investing' funds to 
+       a liquid 'Green Staging Pool' (e.g., Tata Liquid ESG) for 90 days.
 
     IMPORTANT: Ensure the 'Portfolio Builder' prioritizes 'Sustainable Financing' assets 
     as per the user's goal for India's 2070 Net-Zero target.
@@ -24,7 +26,9 @@ class AIService {
     'split': {'spend': 40, 'save': 30, 'invest': 30},
     'portfolio': [{'name': 'Tata Solar', 'allocation': 25, 'reason': '...'}],
     'tax_advice': '...',
-    'next_month_prediction': 8.5
+    'next_month_prediction': 8.5,
+    'is_staging_ready': false,
+    'staging_progress': 'Month 1 of 3'
     """;
 
     try {
@@ -70,7 +74,9 @@ class AIService {
         {'name': 'Gold Bees', 'allocation': 15, 'reason': 'Stability'},
       ],
       'tax_advice': 'Long Term Capital Gains (LTCG) above ₹1 Lakh on equity is taxed at 12.5% (new regime). Short term crypto gains are taxed flat 30%.',
-      'next_month_prediction': 12.5
+      'next_month_prediction': 12.5,
+      'is_staging_ready': false,
+      'staging_progress': 'Month 1 of 3'
     };
   }
 }
