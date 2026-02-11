@@ -1,0 +1,8 @@
+{
+  "/triple-guard/page": "app/triple-guard/page.js",
+  "/page": "app/page.js",
+  "/investing-complete/page": "app/investing-complete/page.js",
+  "/portfolio/page": "app/portfolio/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/learn/page": "app/learn/page.js"
+}
