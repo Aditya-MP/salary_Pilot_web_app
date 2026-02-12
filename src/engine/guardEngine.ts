@@ -1,5 +1,5 @@
 export interface GuardInput {
-    emotion: "calm" | "stressed";
+    emotion: "calm" | "stressed" | "fomo";
     streakActive: boolean;
     riskProfile: "conservative" | "balanced" | "aggressive";
 }
@@ -9,7 +9,7 @@ export interface GuardResult {
     allowExecution: boolean;
 }
 
-function emotionGuard(emotion: "calm" | "stressed"): number {
+function emotionGuard(emotion: GuardInput["emotion"]): number {
     return emotion === "calm" ? 1 : 0.4;
 }
 
