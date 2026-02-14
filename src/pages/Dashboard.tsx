@@ -6,7 +6,7 @@ import { useLivePrices, calculatePortfolioValue } from '../hooks/useLivePrices';
 
 export default function Dashboard() {
   const { holdings, streakCount, pulse, decisionLog } = useAppStore();
-  const { prices, changes } = useLivePrices();
+  const { prices } = useLivePrices();
 
   const totalPortfolio = calculatePortfolioValue(holdings, prices);
   const sustainabilityScore = Math.min(100, streakCount * 5 + (holdings.esg / totalPortfolio) * 50);
@@ -104,7 +104,7 @@ export default function Dashboard() {
               <BarChart data={performanceData}>
                 <XAxis dataKey="month" stroke="#6b7280" />
                 <YAxis stroke="#6b7280" />
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px' }}
                   labelStyle={{ color: '#fff' }}
                 />
@@ -126,9 +126,9 @@ export default function Dashboard() {
       <div className="bg-black/40 backdrop-blur-xl border border-blue-500/20 rounded-xl p-6">
         <h2 className="text-xl font-semibold text-white mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <ActionCard to="/salary-splitting" label="Split Salary" icon={DollarSign} />
-          <ActionCard to="/triple-guard" label="Approve Investment" icon={Shield} />
-          <ActionCard to="/quarterly-pulse" label="Quarterly Pulse" icon={TrendingUp} />
+          <ActionCard to="/dashboard/salary-splitting" label="Split Salary" icon={DollarSign} />
+          <ActionCard to="/dashboard/triple-guard" label="Approve Investment" icon={Shield} />
+          <ActionCard to="/dashboard/quarterly-pulse" label="Quarterly Pulse" icon={TrendingUp} />
         </div>
       </div>
 

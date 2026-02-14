@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAppStore } from './store/useAppStore';
-import OnboardingFlow from './pages/OnboardingFlow';
 import DashboardLayout from './layouts/DashboardLayout';
 import Dashboard from './pages/Dashboard';
 import SalarySplitting from './pages/SalarySplitting';
@@ -25,12 +24,9 @@ function App() {
         <Route path="/login" element={<AuthPage />} />
         <Route path="/signup" element={<AuthPage />} />
 
-        {/* Onboarding */}
-        <Route path="/onboarding" element={<OnboardingFlow />} />
-
         {/* Protected Dashboard Routes */}
         <Route path="/dashboard" element={
-          onboardingCompleted ? <DashboardLayout /> : <Navigate to="/onboarding" replace />
+          onboardingCompleted ? <DashboardLayout /> : <Navigate to="/login" replace />
         }>
           <Route index element={<Dashboard />} />
           <Route path="salary-splitting" element={<SalarySplitting />} />

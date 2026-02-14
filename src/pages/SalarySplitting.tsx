@@ -8,7 +8,6 @@ export default function SalarySplitting() {
   const { salary, risk, split, setSplit, setRisk } = useAppStore();
   const navigate = useNavigate();
   const [mode, setMode] = useState<'ai' | 'manual'>('ai');
-  const [showRiskProfile, setShowRiskProfile] = useState(false);
   const [selectedRisk, setSelectedRisk] = useState<RiskType | null>(risk);
 
   const aiRecommendations = {
@@ -17,7 +16,7 @@ export default function SalarySplitting() {
     aggressive: { needs: 40, wants: 25, investments: 35 },
   };
 
-  const recommended = risk ? aiRecommendations[risk] : split;
+  const recommended = selectedRisk ? aiRecommendations[selectedRisk] : (risk ? aiRecommendations[risk] : { needs: 50, wants: 30, investments: 20 });
 
   const handleApply = () => {
     if (mode === 'ai' && !selectedRisk) {
@@ -89,8 +88,8 @@ export default function SalarySplitting() {
                     key={r.id}
                     onClick={() => setSelectedRisk(r.id)}
                     className={`p-3 rounded-lg border transition-all text-sm ${selectedRisk === r.id
-                        ? 'bg-blue-500/20 border-blue-500 text-white'
-                        : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/30'
+                      ? 'bg-blue-500/20 border-blue-500 text-white'
+                      : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/30'
                       }`}
                   >
                     {r.title}
@@ -100,9 +99,9 @@ export default function SalarySplitting() {
               </div>
             </div>
 
-            <AllocationBar label="Needs (Expenses)" value={recommended.needs} color="red" />
-            <AllocationBar label="Wants (Savings)" value={recommended.wants} color="yellow" />
-            <AllocationBar label="Investments" value={recommended.investments} color="green" />
+            <AllocationBar label="Needs (Expenses)" value={recommended?.needs || 50} color="red" />
+            <AllocationBar label="Wants (Savings)" value={recommended?.wants || 30} color="yellow" />
+            <AllocationBar label="Investments" value={recommended?.investments || 20} color="green" />
           </div>
         ) : (
           <div className="space-y-4">

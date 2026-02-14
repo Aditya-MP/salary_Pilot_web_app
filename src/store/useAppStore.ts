@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { type PulseData, initializePulse, advancePulse as engineAdvancePulse } from "../engine/pulseEngine";
 import { type RiskType } from "../types";
 import { analyzeMarket } from "../engine/trendEngine";
+import { mockHoldings, mockDecisionLog } from "../data/mockData";
 
 interface AppState {
     salary: number | null;
@@ -59,8 +60,8 @@ interface AppState {
 export const useAppStore = create<AppState>()(
     persist(
         (set, get) => ({
-            salary: null,
-            risk: null,
+            salary: 50000,
+            risk: 'moderate' as RiskType,
             pulse: initializePulse(),
             streakActive: true,
 
@@ -87,7 +88,7 @@ export const useAppStore = create<AppState>()(
             resetPulse: () => set({ pulse: initializePulse() }),
 
             // Streak Logic
-            streakCount: 0,
+            streakCount: 3,
             lastDecisionBlocked: false,
 
             incrementStreak: () =>
@@ -108,11 +109,7 @@ export const useAppStore = create<AppState>()(
                 }),
 
             // Portfolio Holdings
-            holdings: {
-                equity: 0,
-                crypto: 0,
-                esg: 0,
-            },
+            holdings: mockHoldings,
 
             setHoldings: (data) => set((state) => ({
                 holdings: {
@@ -127,12 +124,12 @@ export const useAppStore = create<AppState>()(
             setMarketTrend: (data) => set({ marketTrend: data }),
 
             // Onboarding State
-            onboardingCompleted: false,
+            onboardingCompleted: true,
             completeOnboarding: () => set({ onboardingCompleted: true }),
             resetOnboarding: () => set({ onboardingCompleted: false, salary: null, risk: null, pulse: initializePulse(), streakCount: 0 }), // Full reset
 
             // Decision Log
-            decisionLog: [],
+            decisionLog: mockDecisionLog,
             addLog: (entry) =>
                 set((state) => ({
                     decisionLog: [

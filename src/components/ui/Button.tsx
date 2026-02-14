@@ -8,8 +8,8 @@ function cn(...inputs: ClassValue[]) {
 }
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'ghost' | 'glass';
-    size?: 'sm' | 'md' | 'lg';
+    variant?: 'primary' | 'secondary' | 'ghost' | 'glass' | 'outline';
+    size?: 'sm' | 'md' | 'lg' | 'xl';
     isLoading?: boolean;
 }
 
@@ -24,12 +24,14 @@ const Button = forwardRef<HTMLButtonElement, MotionButtonProps>(
             secondary: 'bg-transparent border border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 shadow-[0_0_10px_rgba(16,185,129,0.1)] hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]',
             ghost: 'bg-transparent text-slate-300 hover:text-white hover:bg-white/5',
             glass: 'bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 shadow-lg',
+            outline: 'bg-transparent border border-white/20 text-white hover:bg-white/10 hover:border-white/40',
         };
 
         const sizes = {
             sm: 'h-9 px-4 text-sm',
             md: 'h-11 px-6 text-base',
             lg: 'h-14 px-8 text-lg',
+            xl: 'h-16 px-10 text-xl',
         };
 
         return (
@@ -39,8 +41,8 @@ const Button = forwardRef<HTMLButtonElement, MotionButtonProps>(
                 whileTap={{ scale: 0.98 }}
                 className={cn(
                     'relative inline-flex items-center justify-center rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:pointer-events-none overflow-hidden',
-                    variants[variant],
-                    sizes[size],
+                    variants[variant as keyof typeof variants],
+                    sizes[size as keyof typeof sizes],
                     className
                 )}
                 {...props}

@@ -21,6 +21,7 @@ const InputGroup = ({ label, type, placeHolder }: { label: string, type: string,
 const SocialButton = ({ icon, label }: { icon: string, label: string }) => (
     <button
         type="button"
+        aria-label={label}
         className="flex items-center justify-center px-4 py-3 border border-white/10 rounded-lg bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 group"
     >
         <span className="text-white font-medium group-hover:scale-110 transition-transform duration-300">{icon}</span>
@@ -29,18 +30,18 @@ const SocialButton = ({ icon, label }: { icon: string, label: string }) => (
 
 export default function AuthPage() {
     const [isLogin, setIsLogin] = useState(true);
-    const completeOnboarding = useAppStore((state) => state.completeOnboarding);
     const navigate = useNavigate();
 
     const toggleAuth = () => setIsLogin(!isLogin);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Simulate login/signup logic
+        const completeOnboarding = useAppStore.getState().completeOnboarding;
+        completeOnboarding();
+        // Small delay to ensure state persists
         setTimeout(() => {
-            completeOnboarding();
             navigate('/dashboard');
-        }, 1000);
+        }, 100);
     };
 
     return (
