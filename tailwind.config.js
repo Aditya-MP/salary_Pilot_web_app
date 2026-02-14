@@ -11,6 +11,7 @@ export default {
                 'marquee-reverse': 'marquee-reverse 25s linear infinite',
                 'scan': 'scan 4s ease-in-out infinite',
                 'blink': 'blink 1s step-end infinite',
+                'spin': 'spin 40s linear infinite',
             },
             keyframes: {
                 fadeInUp: {
@@ -36,6 +37,10 @@ export default {
                 blink: {
                     '0%, 100%': { opacity: '1' },
                     '50%': { opacity: '0' },
+                },
+                spin: {
+                    '0%': { transform: 'rotate(0deg)' },
+                    '100%': { transform: 'rotate(360deg)' },
                 },
             },
         },
