@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import bullVsBearImage from '../../assets/bull_vs_bear.png';
+import auraLightImage from '../../assets/aura_light_chart_art.png';
 
 const UltraBackground = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -15,87 +15,37 @@ const UltraBackground = () => {
         let height = canvas.height = window.innerHeight;
 
         const particles: Particle[] = [];
-        const particleCount = Math.min(width * 0.05, 40);
-        const mouse = { x: 0, y: 0, active: false };
+        const particleCount = 30;
 
         class Particle {
             x: number;
             y: number;
-            vx: number;
-            vy: number;
+            speedY: number;
             size: number;
-            type: 'bull' | 'bear';
             color: string;
+            alpha: number;
 
             constructor() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.type = Math.random() > 0.5 ? 'bull' : 'bear';
-
-                if (this.type === 'bull') {
-                    this.vy = -(Math.random() * 0.5 + 0.2);
-                    this.vx = (Math.random() - 0.5) * 0.2;
-                    this.color = 'rgba(16, 185, 129, 0.6)'; // Emerald-500, higher opacity for pop
-                } else {
-                    this.vy = (Math.random() * 0.5 + 0.2);
-                    this.vx = (Math.random() - 0.5) * 0.2;
-                    this.color = 'rgba(244, 63, 94, 0.6)'; // Rose-500, higher opacity for pop
-                }
-
-                this.size = Math.random() * 2 + 0.5;
+                this.speedY = Math.random() * 0.5 + 0.1;
+                this.size = Math.random() * 3;
+                this.alpha = Math.random() * 0.5 + 0.2;
+                // Gold and Emerald particles for "Aura"
+                this.color = Math.random() > 0.5 ? '234, 179, 8' : '16, 185, 129';
             }
 
             update() {
-                this.x += this.vx;
-                this.y += this.vy;
-
-                if (this.x < 0) this.x = width;
-                if (this.x > width) this.x = 0;
-
-                if (this.type === 'bull' && this.y < -50) {
-                    this.y = height + 50;
-                    this.x = Math.random() * width;
-                }
-                if (this.type === 'bear' && this.y > height + 50) {
-                    this.y = -50;
-                    this.x = Math.random() * width;
-                }
-
-                if (mouse.active) {
-                    const dx = mouse.x - this.x;
-                    const dy = mouse.y - this.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    const forceDirectionX = dx / distance;
-                    const forceDirectionY = dy / distance;
-                    const maxDistance = 200;
-                    const force = (maxDistance - distance) / maxDistance;
-
-                    if (distance < maxDistance) {
-                        this.vx -= forceDirectionX * force * 0.5;
-                        this.vy -= forceDirectionY * force * 0.5;
-                    }
-                }
+                this.y -= this.speedY; // Float up
+                if (this.y < -10) this.y = height + 10;
             }
 
             draw() {
                 if (!ctx) return;
-                ctx.save();
-                ctx.translate(this.x, this.y);
-
                 ctx.beginPath();
-                if (this.type === 'bull') {
-                    ctx.moveTo(0, -this.size);
-                    ctx.lineTo(this.size, this.size);
-                    ctx.lineTo(-this.size, this.size);
-                } else {
-                    ctx.moveTo(0, this.size);
-                    ctx.lineTo(this.size, -this.size);
-                    ctx.lineTo(-this.size, -this.size);
-                }
-                ctx.closePath();
-                ctx.fillStyle = this.color;
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
                 ctx.fill();
-                ctx.restore();
             }
         }
 
@@ -107,9 +57,9 @@ const UltraBackground = () => {
             if (!ctx) return;
             ctx.clearRect(0, 0, width, height);
 
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
+            particles.forEach(p => {
+                p.update();
+                p.draw();
             });
 
             requestAnimationFrame(animate);
@@ -122,49 +72,32 @@ const UltraBackground = () => {
             height = canvas.height = window.innerHeight;
         };
 
-        const handleMouseMove = (e: MouseEvent) => {
-            const rect = canvas.getBoundingClientRect();
-            mouse.x = e.clientX - rect.left;
-            mouse.y = e.clientY - rect.top;
-            mouse.active = true;
-        };
-
-        const handleMouseLeave = () => {
-            mouse.active = false;
-        };
-
         window.addEventListener('resize', handleResize);
-        window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('mouseleave', handleMouseLeave);
 
         return () => {
             window.removeEventListener('resize', handleResize);
-            window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('mouseleave', handleMouseLeave);
         };
     }, []);
 
     return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none -z-0 bg-navy-950">
-            {/* Main Background Image - Vibrant and Visible */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none -z-0 bg-slate-50">
+            {/* Main Background Image - Light Mode - Muted for "Aura" effect */}
             <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
                 style={{
-                    backgroundImage: `url(${bullVsBearImage})`,
-                    filter: 'contrast(1.1) brightness(0.8)'
+                    backgroundImage: `url(${auraLightImage})`,
+                    // Slight brightness boost to ensure it flows with the white theme
+                    filter: 'brightness(1.1) contrast(1.05) saturate(0.8)'
                 }}
             />
 
-            {/* Vignette Overlay: Clear center, Dark edges */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,#02040a_100%)] opacity-90" />
+            {/* Stronger White Overlay for Text Clarity */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/40 to-slate-50/95" />
 
-            {/* Subtle Gradient from bottom to blend into content */}
-            <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-navy-950 via-navy-950/50 to-transparent" />
-
-            {/* Canvas Overlay for Particles */}
+            {/* Canvas Overlay for Golden/Emerald Aura Particles - Reduced Opacity */}
             <canvas
                 ref={canvasRef}
-                className="absolute inset-0 w-full h-full pointer-events-none mix-blend-screen opacity-70"
+                className="absolute inset-0 w-full h-full mix-blend-multiply opacity-40"
             />
         </div>
     );

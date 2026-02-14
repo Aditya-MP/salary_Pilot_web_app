@@ -17,10 +17,10 @@ export const GlassCard = ({ children, className = '', hoverEffect = true, delay 
             transition={{ duration: 0.5, delay }}
             whileHover={hoverEffect ? {
                 y: -5,
-                boxShadow: '0 0 20px rgba(16, 185, 129, 0.2)',
-                borderColor: 'rgba(16, 185, 129, 0.3)'
+                boxShadow: '0 10px 30px -10px rgba(16, 185, 129, 0.2)',
+                borderColor: 'rgba(16, 185, 129, 0.4)'
             } : {}}
-            className={`p-6 border !border-transparent bg-navy-800/50 backdrop-blur-md rounded-2xl hover:shadow-lg transition-all duration-300 ${className}`}
+            className={`glass-card p-6 border border-slate-200/50 bg-white/60 backdrop-blur-md rounded-2xl shadow-sm ${className}`}
         >
             {children}
         </motion.div>
