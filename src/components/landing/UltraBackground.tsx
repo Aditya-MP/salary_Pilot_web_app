@@ -81,18 +81,18 @@ const UltraBackground = () => {
 
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none -z-0 bg-slate-50">
-            {/* Main Background Image - Light Mode - Muted for "Aura" effect */}
+            {/* Main Background Image - Light Mode - "Aura" effect */}
             <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-75"
                 style={{
                     backgroundImage: `url(${auraLightImage})`,
                     // Slight brightness boost to ensure it flows with the white theme
-                    filter: 'brightness(1.1) contrast(1.05) saturate(0.8)'
+                    filter: 'brightness(1.05) contrast(1.05) saturate(0.9)'
                 }}
             />
 
-            {/* Stronger White Overlay for Text Clarity */}
-            <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/40 to-slate-50/95" />
+            {/* White Overlay for Text Clarity - Reduced for better background visibility */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/20 to-slate-50/90" />
 
             {/* Canvas Overlay for Golden/Emerald Aura Particles - Reduced Opacity */}
             <canvas
