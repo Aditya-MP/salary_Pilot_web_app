@@ -77,13 +77,16 @@ const Hero = () => {
                 style={{ y, opacity, scale, x: springX, rotateX: springY, perspective: 1000 }}
                 className="relative z-10 container mx-auto px-6 text-center"
             >
+                {/* Subtle Text Backdrop for Readability */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-radial-gradient from-navy-950/80 via-navy-950/40 to-transparent blur-3xl -z-10 pointer-events-none" />
+
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 1, ease: "easeOut" }}
-                    className="inline-block mb-4 px-4 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md"
+                    className="inline-block mb-4 px-4 py-1.5 rounded-full border border-emerald-500/30 bg-navy-900/50 backdrop-blur-md shadow-lg"
                 >
-                    <span className="text-emerald-400 text-xs font-semibold tracking-wider uppercase flex items-center gap-2">
+                    <span className="text-emerald-400 text-xs font-semibold tracking-wider uppercase flex items-center gap-2 drop-shadow-md">
                         <span className="relative flex h-2 w-2">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -96,12 +99,12 @@ const Hero = () => {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="text-6xl md:text-8xl font-display font-bold mb-8 tracking-tight leading-none"
+                    className="text-6xl md:text-8xl font-display font-bold mb-8 tracking-tight leading-none drop-shadow-2xl"
                 >
-                    <span className="block text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-slate-500 drop-shadow-2xl">
+                    <span className="block text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
                         Smarter Finance.
                     </span>
-                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-200 to-teal-400 animate-shimmer bg-[length:200%_auto]">
+                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-200 to-teal-400 animate-shimmer bg-[length:200%_auto] drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
                         Effortless Control.
                     </span>
                 </motion.h1>
@@ -110,9 +113,9 @@ const Hero = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                    className="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto mb-12 font-light leading-relaxed"
+                    className="text-xl md:text-2xl text-slate-200 max-w-3xl mx-auto mb-12 font-light leading-relaxed drop-shadow-lg"
                 >
-                    Experience the <span className="text-slate-200 font-normal">next generation</span> of wealth management with real-time AI insights,
+                    Experience the <span className="text-white font-medium drop-shadow-md">next generation</span> of wealth management with real-time AI insights,
                     automated salary routing, and institutional-grade security.
                 </motion.p>
 
@@ -123,7 +126,7 @@ const Hero = () => {
                     className="flex flex-col sm:flex-row items-center justify-center gap-6"
                 >
                     <Link to="/signup">
-                        <Button size="xl" className="group relative overflow-hidden bg-emerald-500 hover:bg-emerald-400 text-navy-900 font-bold px-10 py-5 shadow-[0_0_40px_rgba(16,185,129,0.3)] transition-all duration-300 hover:scale-105">
+                        <Button size="xl" className="group relative overflow-hidden bg-emerald-500 hover:bg-emerald-400 text-navy-900 font-bold px-10 py-5 shadow-[0_0_40px_rgba(16,185,129,0.3)] transition-all duration-300 hover:scale-105 border border-emerald-400/20">
                             <span className="relative z-10 flex items-center gap-2">
                                 Get Started Now
                                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -133,8 +136,8 @@ const Hero = () => {
                             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:animate-shimmer" />
                         </Button>
                     </Link>
-                    <Button variant="outline" size="xl" className="group border-white/10 hover:bg-white/5 backdrop-blur-md hover:border-white/20 px-10 py-5">
-                        <span className="text-slate-300 group-hover:text-white transition-colors">Explore Features</span>
+                    <Button variant="outline" size="xl" className="group border-white/20 hover:bg-navy-900/40 backdrop-blur-md hover:border-white/40 px-10 py-5 shadow-lg">
+                        <span className="text-white font-medium group-hover:text-emerald-300 transition-colors drop-shadow-md">Explore Features</span>
                     </Button>
                 </motion.div>
             </motion.div>
