@@ -4,6 +4,7 @@ import Navbar from '../components/layout/Navbar';
 import { Button } from '../components/ui/Button';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '../components/ui/GlassCard';
+import UltraBackground from '../components/landing/UltraBackground';
 
 const FloatingParticle = ({ delay }: { delay: number }) => (
     <motion.div
@@ -68,6 +69,8 @@ const Hero = () => {
                     <FloatingParticle key={i} delay={i * 0.5} />
                 ))}
             </div>
+
+            <UltraBackground />
 
             <motion.div
                 style={{ y, opacity, scale, x: springX, rotateX: springY, perspective: 1000 }}
