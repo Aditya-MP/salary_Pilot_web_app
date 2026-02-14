@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import bullVsBearImage from '../../assets/bull_vs_bear.png';
 
 const UltraBackground = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -14,8 +15,7 @@ const UltraBackground = () => {
         let height = canvas.height = window.innerHeight;
 
         const particles: Particle[] = [];
-        const particleCount = Math.min(width * 0.15, 150); // Responsive count
-        const connectionDistance = 150;
+        const particleCount = Math.min(width * 0.05, 40);
         const mouse = { x: 0, y: 0, active: false };
 
         class Particle {
@@ -24,28 +24,43 @@ const UltraBackground = () => {
             vx: number;
             vy: number;
             size: number;
+            type: 'bull' | 'bear';
             color: string;
 
             constructor() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.size = Math.random() * 2 + 1;
-                // Mix of Emerald, Cyan, and White for a tech/fintech feel
-                const colors = ['rgba(16, 185, 129, 0.7)', 'rgba(56, 189, 248, 0.7)', 'rgba(255, 255, 255, 0.5)'];
-                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.type = Math.random() > 0.5 ? 'bull' : 'bear';
+
+                if (this.type === 'bull') {
+                    this.vy = -(Math.random() * 0.5 + 0.2);
+                    this.vx = (Math.random() - 0.5) * 0.2;
+                    this.color = 'rgba(16, 185, 129, 0.6)'; // Emerald-500, higher opacity for pop
+                } else {
+                    this.vy = (Math.random() * 0.5 + 0.2);
+                    this.vx = (Math.random() - 0.5) * 0.2;
+                    this.color = 'rgba(244, 63, 94, 0.6)'; // Rose-500, higher opacity for pop
+                }
+
+                this.size = Math.random() * 2 + 0.5;
             }
 
             update() {
                 this.x += this.vx;
                 this.y += this.vy;
 
-                // Bounce off edges
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
 
-                // Mouse interaction
+                if (this.type === 'bull' && this.y < -50) {
+                    this.y = height + 50;
+                    this.x = Math.random() * width;
+                }
+                if (this.type === 'bear' && this.y > height + 50) {
+                    this.y = -50;
+                    this.x = Math.random() * width;
+                }
+
                 if (mouse.active) {
                     const dx = mouse.x - this.x;
                     const dy = mouse.y - this.y;
@@ -56,94 +71,46 @@ const UltraBackground = () => {
                     const force = (maxDistance - distance) / maxDistance;
 
                     if (distance < maxDistance) {
-                        this.vx -= forceDirectionX * force * 0.05;
-                        this.vy -= forceDirectionY * force * 0.05;
+                        this.vx -= forceDirectionX * force * 0.5;
+                        this.vy -= forceDirectionY * force * 0.5;
                     }
                 }
             }
 
             draw() {
                 if (!ctx) return;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                if (this.type === 'bull') {
+                    ctx.moveTo(0, -this.size);
+                    ctx.lineTo(this.size, this.size);
+                    ctx.lineTo(-this.size, this.size);
+                } else {
+                    ctx.moveTo(0, this.size);
+                    ctx.lineTo(this.size, -this.size);
+                    ctx.lineTo(-this.size, -this.size);
+                }
+                ctx.closePath();
                 ctx.fillStyle = this.color;
                 ctx.fill();
+                ctx.restore();
             }
         }
 
-        // Initialize particles
         for (let i = 0; i < particleCount; i++) {
             particles.push(new Particle());
         }
-
-        const drawGrid = () => {
-            if (!ctx) return;
-            // Perspective Grid at the bottom
-            const gridSize = 50;
-            const time = Date.now() * 0.0005;
-            const gridPerspectiveY = height * 0.75;
-
-            ctx.save();
-            ctx.strokeStyle = 'rgba(16, 185, 129, 0.05)';
-            ctx.lineWidth = 1;
-
-            // Vertical lines with perspective
-            for (let i = 0; i < width; i += gridSize) {
-                const x = i + (Math.sin(time + i) * 10); // Slight wave effect
-                ctx.beginPath();
-                ctx.moveTo(x, gridPerspectiveY); // Start fading in from middle
-                ctx.lineTo(x - (width / 2 - x) * 1.5, height); // Perspective flare out
-                ctx.stroke();
-            }
-
-            // Horizontal lines moving forward
-            const offset = (Date.now() * 0.02) % gridSize;
-            for (let i = 0; i < height - gridPerspectiveY; i += gridSize) {
-                const y = gridPerspectiveY + i + offset;
-                if (y > height) continue;
-
-                const progress = (y - gridPerspectiveY) / (height - gridPerspectiveY);
-                ctx.globalAlpha = progress * 0.3; // Fade in as it gets closer
-
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(width, y);
-                ctx.stroke();
-                ctx.globalAlpha = 1;
-            }
-            ctx.restore();
-        };
 
         const animate = () => {
             if (!ctx) return;
             ctx.clearRect(0, 0, width, height);
 
-            // Draw faint connections first (behind particles)
-            ctx.lineWidth = 0.5;
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < connectionDistance) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(16, 185, 129, ${1 - distance / connectionDistance})`; // Fade based on distance
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-
-            // Draw particles
             particles.forEach(particle => {
                 particle.update();
                 particle.draw();
             });
-
-            // Draw Perspective Grid
-            drawGrid();
 
             requestAnimationFrame(animate);
         };
@@ -156,8 +123,9 @@ const UltraBackground = () => {
         };
 
         const handleMouseMove = (e: MouseEvent) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
             mouse.active = true;
         };
 
@@ -177,11 +145,28 @@ const UltraBackground = () => {
     }, []);
 
     return (
-        <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            style={{ zIndex: 0 }}
-        />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none -z-0 bg-navy-950">
+            {/* Main Background Image - Vibrant and Visible */}
+            <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80"
+                style={{
+                    backgroundImage: `url(${bullVsBearImage})`,
+                    filter: 'contrast(1.1) brightness(0.8)'
+                }}
+            />
+
+            {/* Vignette Overlay: Clear center, Dark edges */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,#02040a_100%)] opacity-90" />
+
+            {/* Subtle Gradient from bottom to blend into content */}
+            <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-navy-950 via-navy-950/50 to-transparent" />
+
+            {/* Canvas Overlay for Particles */}
+            <canvas
+                ref={canvasRef}
+                className="absolute inset-0 w-full h-full pointer-events-none mix-blend-screen opacity-70"
+            />
+        </div>
     );
 };
 

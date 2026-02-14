@@ -20,7 +20,7 @@ export const GlassCard = ({ children, className = '', hoverEffect = true, delay 
                 boxShadow: '0 0 20px rgba(16, 185, 129, 0.2)',
                 borderColor: 'rgba(16, 185, 129, 0.3)'
             } : {}}
-            className={`glass-card p-6 border border-white/5 bg-navy-900/40 backdrop-blur-md rounded-2xl ${className}`}
+            className={`p-6 border !border-transparent bg-navy-800/50 backdrop-blur-md rounded-2xl hover:shadow-lg transition-all duration-300 ${className}`}
         >
             {children}
         </motion.div>
