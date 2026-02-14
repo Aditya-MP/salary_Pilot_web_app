@@ -11,6 +11,8 @@ import News from './pages/News';
 import Learning from './pages/Learning';
 import AICoach from './pages/AICoach';
 import RiskProfile from './pages/RiskProfile';
+import LandingPage from './pages/LandingPage';
+import AuthPage from './pages/AuthPage';
 
 function App() {
   const onboardingCompleted = useAppStore((s) => s.onboardingCompleted);
@@ -18,9 +20,16 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<AuthPage />} />
+        <Route path="/signup" element={<AuthPage />} />
+
+        {/* Onboarding */}
         <Route path="/onboarding" element={<OnboardingFlow />} />
-        
-        <Route path="/" element={
+
+        {/* Protected Dashboard Routes */}
+        <Route path="/dashboard" element={
           onboardingCompleted ? <DashboardLayout /> : <Navigate to="/onboarding" replace />
         }>
           <Route index element={<Dashboard />} />
@@ -34,7 +43,8 @@ function App() {
           <Route path="ai-coach" element={<AICoach />} />
         </Route>
 
-        <Route path="*" element={<Navigate to={onboardingCompleted ? "/" : "/onboarding"} replace />} />
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

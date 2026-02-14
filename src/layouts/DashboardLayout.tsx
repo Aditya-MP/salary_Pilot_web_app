@@ -6,13 +6,13 @@ export default function DashboardLayout() {
   const resetOnboarding = useAppStore((s) => s.resetOnboarding);
 
   const navItems = [
-    { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/salary-splitting', icon: DollarSign, label: 'Salary Splitting' },
-    { to: '/quarterly-pulse', icon: TrendingUp, label: 'Quarterly Pulse' },
-    { to: '/portfolio', icon: Briefcase, label: 'Portfolio' },
-    { to: '/news', icon: Newspaper, label: 'News' },
-    { to: '/learning', icon: GraduationCap, label: 'Learning Hub' },
-    { to: '/ai-coach', icon: Bot, label: 'AI Coach' },
+    { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { to: '/dashboard/salary-splitting', icon: DollarSign, label: 'Salary Splitting' },
+    { to: '/dashboard/quarterly-pulse', icon: TrendingUp, label: 'Quarterly Pulse' },
+    { to: '/dashboard/portfolio', icon: Briefcase, label: 'Portfolio' },
+    { to: '/dashboard/news', icon: Newspaper, label: 'News' },
+    { to: '/dashboard/learning', icon: GraduationCap, label: 'Learning Hub' },
+    { to: '/dashboard/ai-coach', icon: Bot, label: 'AI Coach' },
   ];
 
   return (
@@ -30,12 +30,11 @@ export default function DashboardLayout() {
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.to === '/'}
+              end={item.to === '/dashboard'}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                  isActive
-                    ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                `flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive
+                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                  : 'text-gray-400 hover:bg-white/5 hover:text-white'
                 }`
               }
             >

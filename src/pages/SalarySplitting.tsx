@@ -27,7 +27,7 @@ export default function SalarySplitting() {
       setRisk(selectedRisk!);
       setSplit(recommended);
     }
-    navigate('/triple-guard');
+    navigate('/dashboard/triple-guard');
   };
 
   const investmentAmount = salary ? (salary * split.investments) / 100 : 0;
@@ -48,18 +48,16 @@ export default function SalarySplitting() {
           <div className="flex gap-2">
             <button
               onClick={() => setMode('ai')}
-              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${
-                mode === 'ai' ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400'
-              }`}
+              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${mode === 'ai' ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400'
+                }`}
             >
               <Sparkles size={16} />
               AI Mode
             </button>
             <button
               onClick={() => setMode('manual')}
-              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${
-                mode === 'manual' ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400'
-              }`}
+              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${mode === 'manual' ? 'bg-blue-500 text-white' : 'bg-white/5 text-gray-400'
+                }`}
             >
               <Zap size={16} />
               Manual
@@ -90,11 +88,10 @@ export default function SalarySplitting() {
                   <button
                     key={r.id}
                     onClick={() => setSelectedRisk(r.id)}
-                    className={`p-3 rounded-lg border transition-all text-sm ${
-                      selectedRisk === r.id
+                    className={`p-3 rounded-lg border transition-all text-sm ${selectedRisk === r.id
                         ? 'bg-blue-500/20 border-blue-500 text-white'
                         : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/30'
-                    }`}
+                      }`}
                   >
                     {r.title}
                     {r.recommended && <div className="text-xs text-blue-400 mt-1">AI Pick</div>}

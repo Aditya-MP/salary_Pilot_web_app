@@ -100,7 +100,7 @@ export default function TripleGuard() {
           <h2 className="text-2xl font-bold text-white">Take a moment to reflect</h2>
           <p className="text-gray-400">This pause helps prevent emotional regret trades</p>
           <button
-            onClick={() => navigate('/salary-splitting')}
+            onClick={() => navigate('/dashboard/salary-splitting')}
             className="px-6 py-2 bg-white/10 text-gray-300 rounded-lg hover:bg-white/20 transition-all"
           >
             Cancel & Go Back
@@ -175,7 +175,7 @@ export default function TripleGuard() {
               <span className="text-green-400">₹{(investmentAmount * 0.2).toFixed(0)}</span>
             </div>
           </div>
-          
+
           <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 text-left">
             <p className="text-sm text-blue-400 font-semibold mb-3">Shares Purchased:</p>
             <div className="space-y-2 text-xs text-gray-300">
@@ -207,7 +207,7 @@ export default function TripleGuard() {
           </div>
 
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/dashboard')}
             className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-all"
           >
             Go to Dashboard
@@ -222,13 +222,12 @@ function GuardStep({ active, completed, label }: { active: boolean; completed: b
   return (
     <div className="flex flex-col items-center">
       <div
-        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
-          completed
+        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${completed
             ? 'bg-green-500 border-green-500'
             : active
-            ? 'bg-blue-500 border-blue-500'
-            : 'bg-white/5 border-white/20'
-        }`}
+              ? 'bg-blue-500 border-blue-500'
+              : 'bg-white/5 border-white/20'
+          }`}
       >
         {completed && <CheckCircle size={20} />}
       </div>

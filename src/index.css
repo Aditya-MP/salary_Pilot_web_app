@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply bg-navy-900 text-slate-300 antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display text-slate-100 tracking-tight;
+  }
+}
+
 @layer utilities {
   .animate-fade-in-up {
     animation: fadeInUp 0.8s ease-out forwards;
@@ -15,28 +26,34 @@
     animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
   
+  /* Premium Glassmorphism */
   .glass-card {
-    @apply bg-white/10 backdrop-blur-xl border border-white/20;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-    transition: all 0.3s ease;
+    @apply bg-[#112240]/40 backdrop-blur-xl border border-white/10;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .glass-card:hover {
-    @apply bg-white/15 border-white/30;
-    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
-    transform: translateY(-5px);
+    @apply bg-[#112240]/60 border-emerald-400/20;
+    box-shadow: 0 12px 40px rgba(100, 255, 218, 0.05);
+    transform: translateY(-2px);
   }
 
   .glass-panel {
-    @apply bg-gray-900/20 backdrop-blur-lg border border-gray-700/50;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
+    @apply bg-[#112240]/80 backdrop-blur-lg border border-white/5;
   }
 
-  .glass-panel:hover {
-    @apply bg-gray-900/30 border-gray-600/50;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-    transform: translateY(-3px);
+  /* Text Gradients */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-slate-100 to-slate-400;
+  }
+  
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-gold-400 to-yellow-200;
+  }
+
+  .text-gradient-emerald {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-200;
   }
 
   .floating-element {
@@ -44,7 +61,7 @@
   }
 
   .pulse-glow {
-    box-shadow: 0 0 15px rgba(96, 165, 250, 0.5);
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
     animation: pulse-glow 2s infinite alternate;
   }
 }
@@ -74,18 +91,13 @@
 }
 
 @keyframes pulse-glow {
-  from { box-shadow: 0 0 10px rgba(96, 165, 250, 0.3); }
-  to { box-shadow: 0 0 25px rgba(96, 165, 250, 0.7); }
+  from { box-shadow: 0 0 10px rgba(100, 255, 218, 0.1); }
+  to { box-shadow: 0 0 25px rgba(100, 255, 218, 0.4); }
 }
 
 @keyframes scan {
   0%, 100% { opacity: 0.2; }
   50% { opacity: 1; }
-}
-
-body {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont;
-  background-color: #f9fafb;
 }
 
 @keyframes fade {
