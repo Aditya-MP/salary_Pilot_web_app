@@ -52,8 +52,8 @@ export default function RiskProfile() {
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white">Risk Profile</h1>
-        <p className="text-gray-400 mt-1">Select your preferred volatility tolerance</p>
+        <h1 className="text-3xl font-bold text-navy-900">Risk Profile</h1>
+        <p className="text-slate-500 mt-1">Select your preferred volatility tolerance</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-4">
@@ -61,27 +61,26 @@ export default function RiskProfile() {
           <button
             key={riskItem.id}
             onClick={() => setSelected(riskItem.id)}
-            className={`relative text-left border rounded-2xl p-6 transition-all duration-300 ${
-              selected === riskItem.id
-                ? 'bg-blue-500/20 border-blue-500 scale-105'
-                : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-            }`}
+            className={`relative text-left border rounded-2xl p-6 transition-all duration-300 ${selected === riskItem.id
+                ? 'bg-emerald-50 border-emerald-400 scale-105 shadow-md'
+                : 'bg-white/60 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+              }`}
           >
-            <div className={`mb-4 p-3 rounded-full w-fit ${selected === riskItem.id ? 'bg-blue-500/20 text-blue-400' : 'bg-white/10 text-white'}`}>
+            <div className={`mb-4 p-3 rounded-full w-fit ${selected === riskItem.id ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600'}`}>
               {riskItem.icon}
             </div>
 
             <div className="flex justify-between items-start mb-2">
-              <h3 className="font-bold text-lg text-white">{riskItem.title}</h3>
+              <h3 className="font-bold text-lg text-navy-900">{riskItem.title}</h3>
               {riskItem.recommended && (
-                <span className="bg-blue-600 text-[10px] font-bold px-2 py-0.5 rounded text-white tracking-wide uppercase">AI Pick</span>
+                <span className="bg-emerald-500 text-[10px] font-bold px-2 py-0.5 rounded text-white tracking-wide uppercase">AI Pick</span>
               )}
             </div>
 
-            <p className="text-sm text-gray-400">{riskItem.desc}</p>
+            <p className="text-sm text-slate-500">{riskItem.desc}</p>
 
             {selected === riskItem.id && (
-              <div className="absolute top-4 right-4 text-blue-400">
+              <div className="absolute top-4 right-4 text-emerald-500">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
@@ -94,17 +93,16 @@ export default function RiskProfile() {
       <button
         disabled={!selected}
         onClick={handleSave}
-        className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
-          selected
-            ? 'bg-blue-500 text-white hover:bg-blue-600'
-            : 'bg-gray-800 text-gray-600 cursor-not-allowed'
-        }`}
+        className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${selected
+            ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-md shadow-emerald-500/20'
+            : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+          }`}
       >
         Save Risk Profile
       </button>
 
       {saved && (
-        <div className="fixed bottom-8 right-8 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg animate-fade-in-up">
+        <div className="fixed bottom-8 right-8 bg-emerald-500 text-white px-6 py-4 rounded-lg shadow-lg animate-fade-in-up">
           ✓ Risk profile updated successfully
         </div>
       )}

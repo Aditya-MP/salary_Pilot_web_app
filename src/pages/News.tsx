@@ -20,13 +20,13 @@ export default function News() {
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white">Market News</h1>
-        <p className="text-gray-400 mt-1">Stay informed about your investments</p>
+        <h1 className="text-3xl font-bold text-navy-900">Market News</h1>
+        <p className="text-slate-500 mt-1">Stay informed about your investments</p>
       </div>
 
-      <div className="bg-black/40 backdrop-blur-xl border border-blue-500/20 rounded-xl p-6">
-        <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-          <TrendingUp className="text-blue-400" size={24} />
+      <div className="bg-white/60 backdrop-blur-xl border border-slate-200/50 rounded-xl p-6 shadow-sm">
+        <h2 className="text-xl font-semibold text-navy-900 mb-4 flex items-center gap-2">
+          <TrendingUp className="text-blue-600" size={24} />
           Portfolio Impact News
         </h2>
         <div className="space-y-3">
@@ -36,9 +36,9 @@ export default function News() {
         </div>
       </div>
 
-      <div className="bg-black/40 backdrop-blur-xl border border-blue-500/20 rounded-xl p-6">
-        <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-          <Globe className="text-cyan-400" size={24} />
+      <div className="bg-white/60 backdrop-blur-xl border border-slate-200/50 rounded-xl p-6 shadow-sm">
+        <h2 className="text-xl font-semibold text-navy-900 mb-4 flex items-center gap-2">
+          <Globe className="text-cyan-600" size={24} />
           Global Financial News
         </h2>
         <div className="space-y-3">
@@ -48,18 +48,18 @@ export default function News() {
         </div>
       </div>
 
-      <div className="bg-black/40 backdrop-blur-xl border border-yellow-500/20 rounded-xl p-6">
-        <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-          <AlertCircle className="text-yellow-400" size={24} />
+      <div className="bg-white/60 backdrop-blur-xl border border-yellow-200/50 rounded-xl p-6 shadow-sm">
+        <h2 className="text-xl font-semibold text-navy-900 mb-4 flex items-center gap-2">
+          <AlertCircle className="text-yellow-500" size={24} />
           Regulatory Updates
         </h2>
-        <div className="space-y-3 text-sm text-gray-300">
-          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
-            <p className="font-semibold text-yellow-400 mb-1">Tax Filing Deadline Extended</p>
+        <div className="space-y-3 text-sm text-slate-600">
+          <div className="bg-yellow-50 border border-yellow-200/50 rounded-lg p-4">
+            <p className="font-semibold text-yellow-600 mb-1">Tax Filing Deadline Extended</p>
             <p>ITR filing deadline extended to July 31, 2024 for AY 2024-25</p>
           </div>
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-            <p className="font-semibold text-blue-400 mb-1">New KYC Norms</p>
+          <div className="bg-blue-50 border border-blue-200/50 rounded-lg p-4">
+            <p className="font-semibold text-blue-600 mb-1">New KYC Norms</p>
             <p>SEBI mandates periodic KYC updates for all investors every 2 years</p>
           </div>
         </div>
@@ -70,13 +70,13 @@ export default function News() {
 
 function PortfolioNewsCard({ title, impact, type, category }: { title: string; impact: string; type: string; category: string }) {
   return (
-    <div className="bg-white/5 hover:bg-white/10 border border-blue-500/20 rounded-lg p-4 transition-all cursor-pointer">
+    <div className="bg-slate-50 hover:bg-emerald-50/50 border border-slate-200/50 rounded-lg p-4 transition-all cursor-pointer">
       <div className="flex justify-between items-start">
         <div className="flex-1">
-          <span className="text-xs text-blue-400 font-semibold">{category}</span>
-          <p className="text-white font-medium mt-1">{title}</p>
+          <span className="text-xs text-blue-600 font-semibold">{category}</span>
+          <p className="text-navy-900 font-medium mt-1">{title}</p>
         </div>
-        <div className={`text-right ml-4 ${type === 'positive' ? 'text-green-400' : 'text-red-400'}`}>
+        <div className={`text-right ml-4 ${type === 'positive' ? 'text-emerald-600' : 'text-red-500'}`}>
           <p className="text-lg font-bold">{impact}</p>
           <p className="text-xs">Impact</p>
         </div>
@@ -87,12 +87,12 @@ function PortfolioNewsCard({ title, impact, type, category }: { title: string; i
 
 function GlobalNewsCard({ title, date, source }: { title: string; date: string; source: string }) {
   return (
-    <div className="bg-white/5 hover:bg-white/10 border border-blue-500/20 rounded-lg p-4 transition-all cursor-pointer">
+    <div className="bg-slate-50 hover:bg-emerald-50/50 border border-slate-200/50 rounded-lg p-4 transition-all cursor-pointer">
       <div className="flex items-start gap-3">
-        <Newspaper className="text-gray-400 flex-shrink-0 mt-1" size={20} />
+        <Newspaper className="text-slate-400 flex-shrink-0 mt-1" size={20} />
         <div className="flex-1">
-          <p className="text-white font-medium">{title}</p>
-          <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+          <p className="text-navy-900 font-medium">{title}</p>
+          <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
             <span>{source}</span>
             <span>•</span>
             <span>{date}</span>
