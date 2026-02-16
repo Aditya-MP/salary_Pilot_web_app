@@ -1,7 +1,7 @@
 import { useAppStore } from '../store/useAppStore';
-import { TrendingUp, Shield, Leaf, Calendar, ArrowRight, Wallet, Activity, Sparkles, ChevronRight, BarChart3, Target } from 'lucide-react';
+import { TrendingUp, Shield, Leaf, Calendar, Wallet, Activity, Sparkles, ChevronRight, BarChart3, Target, Flame, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, PieChart, Pie } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, PieChart, Pie, AreaChart, Area, CartesianGrid } from 'recharts';
 import { useLivePrices, calculatePortfolioValue } from '../hooks/useLivePrices';
 
 export default function Dashboard() {
@@ -16,9 +16,23 @@ export default function Dashboard() {
     { name: 'ESG', value: holdings.esg, color: '#10b981' },
   ];
   const performanceData = [
-    { month: 'Jan', profit: 150 }, { month: 'Feb', profit: 280 }, { month: 'Mar', profit: -120 },
-    { month: 'Apr', profit: 420 }, { month: 'May', profit: 180 }, { month: 'Jun', profit: 650 },
+    { month: 'Jan', profit: 150, cumulative: 150 },
+    { month: 'Feb', profit: 280, cumulative: 430 },
+    { month: 'Mar', profit: -120, cumulative: 310 },
+    { month: 'Apr', profit: 420, cumulative: 730 },
+    { month: 'May', profit: 180, cumulative: 910 },
+    { month: 'Jun', profit: 650, cumulative: 1560 },
+    { month: 'Jul', profit: -80, cumulative: 1480 },
+    { month: 'Aug', profit: 320, cumulative: 1800 },
+    { month: 'Sep', profit: 510, cumulative: 2310 },
+    { month: 'Oct', profit: -200, cumulative: 2110 },
+    { month: 'Nov', profit: 380, cumulative: 2490 },
+    { month: 'Dec', profit: 720, cumulative: 3210 },
   ];
+  const totalReturn = performanceData.reduce((s, d) => s + d.profit, 0);
+  const bestMonth = performanceData.reduce((best, d) => d.profit > best.profit ? d : best, performanceData[0]);
+  const avgMonthly = Math.round(totalReturn / performanceData.length);
+  const winRate = Math.round((performanceData.filter(d => d.profit > 0).length / performanceData.length) * 100);
 
   return (
     <div className="p-6 lg:p-8 space-y-6">
@@ -42,36 +56,145 @@ export default function Dashboard() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/[0.06] flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-blue-500/20 flex items-center justify-center"><BarChart3 className="text-blue-400" size={14} /></div>
-            <h2 className="text-white font-semibold">Asset Allocation</h2>
+          <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/20"><BarChart3 className="text-white" size={14} /></div>
+              <div>
+                <h2 className="text-white font-semibold">Asset Allocation</h2>
+                <p className="text-[10px] text-slate-500">Portfolio distribution</p>
+              </div>
+            </div>
+            <Link to="/dashboard/portfolio" className="text-[10px] text-emerald-400 hover:text-emerald-300 font-medium flex items-center gap-1 transition-colors">
+              View All <ChevronRight size={12} />
+            </Link>
           </div>
           <div className="p-6">
             {totalPortfolio > 0 ? (
-              <div className="space-y-4">
-                <ResponsiveContainer width="100%" height={220}>
-                  <PieChart><Pie data={portfolioData} cx="50%" cy="50%" outerRadius={75} innerRadius={45} dataKey="value" strokeWidth={0}>{portfolioData.map((e, i) => <Cell key={i} fill={e.color} />)}</Pie><Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }} /></PieChart>
-                </ResponsiveContainer>
-                <div className="flex justify-center gap-5">{[{ l: 'Equity', c: 'bg-blue-500' }, { l: 'Crypto', c: 'bg-purple-500' }, { l: 'ESG', c: 'bg-emerald-500' }].map(i => <div key={i.l} className="flex items-center gap-2"><div className={`w-2.5 h-2.5 rounded-full ${i.c}`} /><span className="text-xs text-slate-400">{i.l}</span></div>)}</div>
+              <div className="flex flex-col items-center gap-5">
+                {/* Donut with center stats */}
+                <div className="relative w-[200px] h-[200px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie data={portfolioData} cx="50%" cy="50%" outerRadius={85} innerRadius={55} dataKey="value" strokeWidth={0} startAngle={90} endAngle={-270}>
+                        {portfolioData.map((e, i) => <Cell key={i} fill={e.color} />)}
+                      </Pie>
+                      <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff', fontSize: '12px' }} formatter={(v: number | undefined) => [`₹${(v ?? 0).toLocaleString()}`, '']} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <p className="text-[9px] text-slate-500 uppercase tracking-widest">Total</p>
+                    <p className="text-lg font-bold text-white">₹{totalPortfolio.toLocaleString()}</p>
+                    <p className="text-[10px] text-emerald-400 font-medium">+12.5%</p>
+                  </div>
+                </div>
+
+                {/* Per-asset detail rows */}
+                <div className="w-full space-y-2.5">
+                  {[
+                    { name: 'Indian Equities', value: holdings.equity, color: '#3b82f6', dotClass: 'bg-blue-500', iconBg: 'bg-blue-500/15 text-blue-400 border-blue-500/20', change: '+8.2%', changeUp: true },
+                    { name: 'Crypto Assets', value: holdings.crypto, color: '#8b5cf6', dotClass: 'bg-purple-500', iconBg: 'bg-purple-500/15 text-purple-400 border-purple-500/20', change: '+18.7%', changeUp: true },
+                    { name: 'ESG Funds', value: holdings.esg, color: '#10b981', dotClass: 'bg-emerald-500', iconBg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20', change: '+4.1%', changeUp: true },
+                  ].map(asset => {
+                    const pct = totalPortfolio > 0 ? ((asset.value / totalPortfolio) * 100) : 0;
+                    return (
+                      <div key={asset.name} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.05] transition-all group">
+                        {/* Color dot icon */}
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center border flex-shrink-0 ${asset.iconBg}`}>
+                          <div className={`w-3 h-3 rounded-full ${asset.dotClass}`} />
+                        </div>
+                        {/* Details */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs text-white font-semibold">{asset.name}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] text-slate-500">{pct.toFixed(1)}%</span>
+                              <span className="text-xs text-white font-bold">₹{asset.value.toLocaleString()}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                              <div className="h-full rounded-full transition-all duration-700" style={{ width: `${pct}%`, backgroundColor: asset.color }} />
+                            </div>
+                            <span className={`text-[10px] font-semibold ${asset.changeUp ? 'text-emerald-400' : 'text-red-400'}`}>{asset.change}</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             ) : <div className="h-56 flex flex-col items-center justify-center text-slate-500"><Target className="mb-2 text-slate-600" size={32} /><p className="text-sm">No investments yet.</p></div>}
           </div>
         </div>
 
         <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/[0.06] flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center"><TrendingUp className="text-emerald-400" size={14} /></div>
-            <h2 className="text-white font-semibold">Performance Trend</h2>
+          <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/20"><TrendingUp className="text-white" size={14} /></div>
+              <div>
+                <h2 className="text-white font-semibold">Performance Trend</h2>
+                <p className="text-[10px] text-slate-500">12-month returns overview</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+              <TrendingUp size={12} className="text-emerald-400" />
+              <span className="text-[11px] text-emerald-400 font-bold">+₹{totalReturn.toLocaleString()}</span>
+            </div>
           </div>
-          <div className="p-6">
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={performanceData}>
-                <XAxis dataKey="month" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }} />
-                <Bar dataKey="profit" radius={[8, 8, 0, 0]}>{performanceData.map((e, i) => <Cell key={i} fill={e.profit >= 0 ? '#10b981' : '#ef4444'} />)}</Bar>
-              </BarChart>
-            </ResponsiveContainer>
+
+          {/* Summary Stats */}
+          <div className="grid grid-cols-4 border-b border-white/[0.06]">
+            {[
+              { label: 'Total Return', value: `₹${totalReturn.toLocaleString()}`, icon: TrendingUp, color: 'text-emerald-400' },
+              { label: 'Best Month', value: `${bestMonth.month} (₹${bestMonth.profit})`, icon: Trophy, color: 'text-amber-400' },
+              { label: 'Avg Monthly', value: `₹${avgMonthly.toLocaleString()}`, icon: Flame, color: 'text-orange-400' },
+              { label: 'Win Rate', value: `${winRate}%`, icon: Target, color: 'text-cyan-400' },
+            ].map(stat => (
+              <div key={stat.label} className="px-4 py-3 border-r border-white/[0.04] last:border-r-0 hover:bg-white/[0.02] transition-all">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <stat.icon size={11} className={stat.color} />
+                  <span className="text-[9px] text-slate-500 uppercase tracking-wider">{stat.label}</span>
+                </div>
+                <p className="text-xs text-white font-bold">{stat.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Chart Area */}
+          <div className="p-6 pb-4">
+            {/* Area Chart — Cumulative Growth */}
+            <div className="mb-5">
+              <p className="text-[10px] text-slate-500 mb-2 uppercase tracking-wider">Cumulative Growth</p>
+              <ResponsiveContainer width="100%" height={140}>
+                <AreaChart data={performanceData}>
+                  <defs>
+                    <linearGradient id="perfGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity={0.3} />
+                      <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                  <XAxis dataKey="month" stroke="#475569" fontSize={10} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#475569" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(v) => `₹${v}`} />
+                  <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff', fontSize: '12px' }} formatter={(v: number | undefined) => [`₹${(v ?? 0).toLocaleString()}`, 'Growth']} />
+                  <Area type="monotone" dataKey="cumulative" stroke="#10b981" strokeWidth={2} fill="url(#perfGradient)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Bar Chart — Monthly P&L */}
+            <div>
+              <p className="text-[10px] text-slate-500 mb-2 uppercase tracking-wider">Monthly P&L</p>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={performanceData} barSize={14} barGap={4}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                  <XAxis dataKey="month" stroke="#475569" fontSize={10} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#475569" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(v) => `₹${v}`} />
+                  <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff', fontSize: '12px' }} formatter={(v: number | undefined) => [`₹${(v ?? 0).toLocaleString()}`, 'P&L']} />
+                  <Bar dataKey="profit" radius={[6, 6, 0, 0]}>{performanceData.map((e, i) => <Cell key={i} fill={e.profit >= 0 ? '#10b981' : '#ef4444'} />)}</Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
       </div>
