@@ -2,18 +2,24 @@ import { useAppStore } from '../store/useAppStore';
 import { TrendingUp, Shield, Leaf, Calendar, Wallet, Activity, Sparkles, ChevronRight, BarChart3, Target, Flame, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, PieChart, Pie, AreaChart, Area, CartesianGrid } from 'recharts';
-import { useLivePrices, calculatePortfolioValue } from '../hooks/useLivePrices';
+import { useLivePrices, calculatePortfolioValue, BASE_PRICES } from '../hooks/useLivePrices';
 
 export default function Dashboard() {
   const { holdings, streakCount, pulse, decisionLog } = useAppStore();
-  const { prices } = useLivePrices();
+  const { prices, changes } = useLivePrices();
   const totalPortfolio = calculatePortfolioValue(holdings, prices);
-  const sustainabilityScore = Math.min(100, streakCount * 5 + (holdings.esg / totalPortfolio) * 50);
+
+  // Live per-asset values (fluctuate with prices)
+  const liveEquity = Math.round((holdings.equity / BASE_PRICES.equity) * prices.equity);
+  const liveCrypto = Math.round((holdings.crypto / BASE_PRICES.crypto) * prices.crypto);
+  const liveEsg = Math.round((holdings.esg / BASE_PRICES.esg) * prices.esg);
+
+  const sustainabilityScore = Math.min(100, streakCount * 5 + (liveEsg / totalPortfolio) * 50);
 
   const portfolioData = [
-    { name: 'Equity', value: holdings.equity, color: '#3b82f6' },
-    { name: 'Crypto', value: holdings.crypto, color: '#8b5cf6' },
-    { name: 'ESG', value: holdings.esg, color: '#10b981' },
+    { name: 'Equity', value: liveEquity, color: '#3b82f6' },
+    { name: 'Crypto', value: liveCrypto, color: '#f59e0b' },
+    { name: 'ESG', value: liveEsg, color: '#10b981' },
   ];
   const performanceData = [
     { month: 'Jan', profit: 150, cumulative: 150 },
@@ -47,7 +53,7 @@ export default function Dashboard() {
 
       {/* Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard icon={TrendingUp} label="Total Portfolio" value={`₹${totalPortfolio.toLocaleString()}`} color="blue" trend="+12.5%" />
+        <MetricCard icon={TrendingUp} label="Total Portfolio" value={`₹${Math.round(totalPortfolio).toLocaleString()}`} color="blue" trend={`${((totalPortfolio - (holdings.equity + holdings.crypto + holdings.esg)) / (holdings.equity + holdings.crypto + holdings.esg) * 100).toFixed(2)}%`} />
         <MetricCard icon={Shield} label="Discipline Streak" value={`${streakCount} months`} color="purple" trend="Active" />
         <MetricCard icon={Leaf} label="Sustainability" value={`${sustainabilityScore.toFixed(0)}%`} color="green" trend="+5%" />
         <MetricCard icon={Calendar} label="Pulse Status" value={`Month ${pulse.currentMonth}/3`} color="cyan" trend={pulse.state} />
@@ -91,9 +97,9 @@ export default function Dashboard() {
                 {/* Per-asset detail rows */}
                 <div className="w-full space-y-2.5">
                   {[
-                    { name: 'Indian Equities', value: holdings.equity, color: '#3b82f6', dotClass: 'bg-blue-500', iconBg: 'bg-blue-500/15 text-blue-400 border-blue-500/20', change: '+8.2%', changeUp: true },
-                    { name: 'Crypto Assets', value: holdings.crypto, color: '#8b5cf6', dotClass: 'bg-purple-500', iconBg: 'bg-purple-500/15 text-purple-400 border-purple-500/20', change: '+18.7%', changeUp: true },
-                    { name: 'ESG Funds', value: holdings.esg, color: '#10b981', dotClass: 'bg-emerald-500', iconBg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20', change: '+4.1%', changeUp: true },
+                    { name: 'Indian Equities', value: liveEquity, color: '#3b82f6', dotClass: 'bg-blue-500', iconBg: 'bg-blue-500/15 text-blue-400 border-blue-500/20', change: changes.equity, changeUp: changes.equity >= 0 },
+                    { name: 'Crypto Assets', value: liveCrypto, color: '#f59e0b', dotClass: 'bg-amber-500', iconBg: 'bg-amber-500/15 text-amber-400 border-amber-500/20', change: changes.crypto, changeUp: changes.crypto >= 0 },
+                    { name: 'ESG Funds', value: liveEsg, color: '#10b981', dotClass: 'bg-emerald-500', iconBg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20', change: changes.esg, changeUp: changes.esg >= 0 },
                   ].map(asset => {
                     const pct = totalPortfolio > 0 ? ((asset.value / totalPortfolio) * 100) : 0;
                     return (
@@ -115,7 +121,7 @@ export default function Dashboard() {
                             <div className="flex-1 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
                               <div className="h-full rounded-full transition-all duration-700" style={{ width: `${pct}%`, backgroundColor: asset.color }} />
                             </div>
-                            <span className={`text-[10px] font-semibold ${asset.changeUp ? 'text-emerald-400' : 'text-red-400'}`}>{asset.change}</span>
+                            <span className={`text-[10px] font-semibold ${asset.changeUp ? 'text-emerald-400' : 'text-red-400'}`}>{asset.changeUp ? '+' : ''}{asset.change.toFixed(2)}%</span>
                           </div>
                         </div>
                       </div>
@@ -221,9 +227,9 @@ export default function Dashboard() {
         <div className="p-4">
           {totalPortfolio > 0 ? (
             <div className="grid md:grid-cols-3 gap-3">
-              <HoldingCard title="Indian Equities" color="blue" items={[{ n: 'Reliance', v: holdings.equity * 0.3 }, { n: 'TCS', v: holdings.equity * 0.25 }, { n: 'HDFC Bank', v: holdings.equity * 0.25 }, { n: 'Infosys', v: holdings.equity * 0.2 }]} />
-              <HoldingCard title="Crypto Assets" color="purple" items={[{ n: 'Bitcoin', v: holdings.crypto * 0.6 }, { n: 'Ethereum', v: holdings.crypto * 0.4 }]} />
-              <HoldingCard title="ESG Funds" color="green" items={[{ n: 'Nifty ESG Index', v: holdings.esg * 0.5 }, { n: 'Green Bonds', v: holdings.esg * 0.5 }]} />
+              <HoldingCard title="Indian Equities" color="blue" items={[{ n: 'Reliance', v: liveEquity * 0.3 }, { n: 'TCS', v: liveEquity * 0.25 }, { n: 'HDFC Bank', v: liveEquity * 0.25 }, { n: 'Infosys', v: liveEquity * 0.2 }]} />
+              <HoldingCard title="Crypto Assets" color="amber" items={[{ n: 'Bitcoin', v: liveCrypto * 0.6 }, { n: 'Ethereum', v: liveCrypto * 0.4 }]} />
+              <HoldingCard title="ESG Funds" color="green" items={[{ n: 'Nifty ESG Index', v: liveEsg * 0.5 }, { n: 'Green Bonds', v: liveEsg * 0.5 }]} />
             </div>
           ) : <p className="text-slate-500 text-center py-8 text-sm">No holdings yet.</p>}
         </div>
@@ -280,7 +286,7 @@ function ActionCard({ to, label, desc, icon: Icon, color }: { to: string; label:
 }
 
 function HoldingCard({ title, color, items }: { title: string; color: string; items: { n: string; v: number }[] }) {
-  const cfg: Record<string, { text: string; dot: string }> = { blue: { text: 'text-blue-400', dot: 'bg-blue-500' }, purple: { text: 'text-purple-400', dot: 'bg-purple-500' }, green: { text: 'text-emerald-400', dot: 'bg-emerald-500' } };
+  const cfg: Record<string, { text: string; dot: string }> = { blue: { text: 'text-blue-400', dot: 'bg-blue-500' }, purple: { text: 'text-purple-400', dot: 'bg-purple-500' }, green: { text: 'text-emerald-400', dot: 'bg-emerald-500' }, amber: { text: 'text-amber-400', dot: 'bg-amber-500' } };
   const c = cfg[color] || cfg.blue;
   return (
     <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4">

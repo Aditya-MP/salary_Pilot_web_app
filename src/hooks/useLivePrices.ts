@@ -11,7 +11,7 @@ interface PriceData {
   nasdaq: number;
 }
 
-const BASE_PRICES: PriceData = {
+export const BASE_PRICES: PriceData = {
   equity: 100,
   crypto: 50000,
   esg: 100,
