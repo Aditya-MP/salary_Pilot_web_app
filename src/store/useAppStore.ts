@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { type PulseData, initializePulse, advancePulse as engineAdvancePulse } from "../engine/pulseEngine";
 import { type RiskType } from "../types";
 import { analyzeMarket } from "../engine/trendEngine";
@@ -58,10 +57,9 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>()(
-    persist(
         (set, get) => ({
             salary: 50000,
-            risk: 'moderate' as RiskType,
+            risk: 'balanced' as RiskType,
             pulse: initializePulse(),
             streakActive: true,
 
@@ -140,9 +138,5 @@ export const useAppStore = create<AppState>()(
                         ...state.decisionLog,
                     ],
                 })),
-        }),
-        {
-            name: "salary-pilot-storage",
-        }
-    )
+        })
 );

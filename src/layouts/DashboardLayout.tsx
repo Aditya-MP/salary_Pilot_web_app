@@ -1,11 +1,7 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, DollarSign, TrendingUp, Briefcase, Newspaper, GraduationCap, Bot, LogOut } from 'lucide-react';
-import { useAppStore } from '../store/useAppStore';
+import { Outlet, NavLink } from 'react-router-dom';
+import { LayoutDashboard, DollarSign, TrendingUp, Briefcase, Newspaper, GraduationCap, Bot, LogOut, Sparkles } from 'lucide-react';
 
 export default function DashboardLayout() {
-  const resetOnboarding = useAppStore((s) => s.resetOnboarding);
-  const navigate = useNavigate();
-
   const handleLogout = () => {
     localStorage.removeItem('salary-pilot-storage');
     window.location.href = '/';
@@ -22,55 +18,67 @@ export default function DashboardLayout() {
   ];
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden relative">
-      {/* Background Atmosphere */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-mesh-gradient opacity-10 animate-pulse-slow mix-blend-multiply" />
+    <div className="flex h-screen overflow-hidden relative bg-[#0a0f1a]">
+      {/* Ambient glow */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-emerald-500/5 blur-[120px]" />
+        <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] rounded-full bg-blue-500/5 blur-[100px]" />
       </div>
 
-      <aside className="relative z-20 w-72 m-4 flex flex-col bg-white/70 backdrop-blur-2xl border border-slate-200/60 rounded-3xl overflow-hidden shadow-lg">
-        <div className="p-8 border-b border-slate-200/50 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-50 to-blue-50 opacity-50" />
-          <div className="relative z-10">
-            <h1 className="text-3xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
-              SalaryPilot
-            </h1>
-            <p className="text-xs text-slate-500 mt-2 font-medium tracking-wide uppercase">Financial Autopilot</p>
+      <aside className="relative z-20 w-72 m-3 flex flex-col bg-[#111827]/90 backdrop-blur-2xl border border-white/[0.06] rounded-2xl overflow-hidden shadow-2xl">
+        {/* Sidebar header */}
+        <div className="p-6 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/10" />
+          <div className="relative z-10 flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 backdrop-blur-sm flex items-center justify-center border border-emerald-500/30">
+              <Sparkles className="text-emerald-400" size={20} />
+            </div>
+            <div>
+              <h1 className="text-xl font-display font-bold text-white tracking-tight">SalaryPilot</h1>
+              <p className="text-[10px] text-emerald-400/70 font-medium tracking-widest uppercase">Financial Autopilot</p>
+            </div>
           </div>
         </div>
 
-        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto custom-scrollbar">
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto custom-scrollbar">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.to === '/dashboard'}
               className={({ isActive }) =>
-                `group flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-300 relative overflow-hidden ${isActive
-                  ? 'bg-emerald-50 text-emerald-600 shadow-sm border border-emerald-200/50'
-                  : 'text-slate-500 hover:text-navy-900 hover:bg-slate-100 border border-transparent'
+                `group flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-300 text-sm ${isActive
+                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
                 }`
               }
             >
-              <item.icon size={22} className={`transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`} />
-              <span className="text-sm font-medium tracking-wide">{item.label}</span>
+              {({ isActive }) => (
+                <>
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isActive ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'bg-white/5 text-slate-400 group-hover:bg-white/10'}`}>
+                    <item.icon size={16} />
+                  </div>
+                  <span className="font-medium tracking-wide">{item.label}</span>
+                  {isActive && <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-500 rounded-l-full" />}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
 
-        <div className="p-4 border-t border-slate-200/50 bg-slate-50/50">
-          <button
-            onClick={handleLogout}
-            className="group flex items-center gap-3 px-4 py-3.5 w-full rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all duration-300 border border-transparent hover:border-red-200/50"
-          >
-            <LogOut size={20} className="transition-transform duration-300 group-hover:-translate-x-1" />
+        <div className="p-3 border-t border-white/[0.06]">
+          <button onClick={handleLogout}
+            className="group flex items-center gap-3 px-3.5 py-3 w-full rounded-xl text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-300 border border-transparent hover:border-red-500/20">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/5 group-hover:bg-red-500/20 transition-all">
+              <LogOut size={16} className="transition-transform duration-300 group-hover:-translate-x-0.5" />
+            </div>
             <span className="text-sm font-medium">Reset & Logout</span>
           </button>
         </div>
       </aside>
 
-      <main className="flex-1 relative z-10 m-4 ml-0 rounded-3xl overflow-hidden bg-white/50 backdrop-blur-xl border border-slate-200/50 shadow-lg">
-        <div className="h-full overflow-y-auto custom-scrollbar p-8">
+      <main className="flex-1 relative z-10 m-3 ml-0 rounded-2xl overflow-hidden bg-[#111827]/60 backdrop-blur-xl border border-white/[0.06] shadow-2xl">
+        <div className="h-full overflow-y-auto custom-scrollbar">
           <Outlet />
         </div>
       </main>

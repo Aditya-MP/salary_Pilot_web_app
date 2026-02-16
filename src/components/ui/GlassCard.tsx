@@ -11,16 +11,15 @@ interface GlassCardProps {
 export const GlassCard = ({ children, className = '', hoverEffect = true, delay = 0 }: GlassCardProps) => {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] }}
             whileHover={hoverEffect ? {
-                y: -5,
-                boxShadow: '0 10px 30px -10px rgba(16, 185, 129, 0.2)',
-                borderColor: 'rgba(16, 185, 129, 0.4)'
+                y: -8,
+                transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] }
             } : {}}
-            className={`glass-card p-6 border border-slate-200/50 bg-white/60 backdrop-blur-md rounded-2xl shadow-sm ${className}`}
+            className={`glass-card gradient-border p-6 bg-white/60 backdrop-blur-xl rounded-2xl ${className}`}
         >
             {children}
         </motion.div>

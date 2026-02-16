@@ -13,18 +13,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     isLoading?: boolean;
 }
 
-// Combine Framer Motion props with HTML Button props
 type MotionButtonProps = ButtonProps & HTMLMotionProps<"button">;
 
 const Button = forwardRef<HTMLButtonElement, MotionButtonProps>(
     ({ className, variant = 'primary', size = 'md', isLoading, children, ...props }, ref) => {
 
         const variants = {
-            primary: 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 hover:shadow-emerald-400/40 border-0',
-            secondary: 'bg-transparent border border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 shadow-[0_0_10px_rgba(16,185,129,0.1)] hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]',
-            ghost: 'bg-transparent text-slate-300 hover:text-white hover:bg-white/5',
-            glass: 'bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 shadow-lg',
-            outline: 'bg-transparent border border-white/20 text-white hover:bg-white/10 hover:border-white/40',
+            primary: 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 hover:shadow-emerald-500/30 border-0',
+            secondary: 'bg-white border border-slate-200 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-300 shadow-sm',
+            ghost: 'bg-transparent text-slate-600 hover:text-navy-900 hover:bg-slate-100',
+            glass: 'bg-white/60 backdrop-blur-md border border-slate-200/50 text-navy-900 hover:bg-white/80 shadow-sm',
+            outline: 'bg-transparent border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300',
         };
 
         const sizes = {
@@ -40,7 +39,7 @@ const Button = forwardRef<HTMLButtonElement, MotionButtonProps>(
                 whileHover={{ scale: 1.02, translateY: -1 }}
                 whileTap={{ scale: 0.98 }}
                 className={cn(
-                    'relative inline-flex items-center justify-center rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 disabled:opacity-50 disabled:pointer-events-none overflow-hidden',
+                    'relative inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:ring-offset-2 focus:ring-offset-white disabled:opacity-50 disabled:pointer-events-none overflow-hidden',
                     variants[variant as keyof typeof variants],
                     sizes[size as keyof typeof sizes],
                     className

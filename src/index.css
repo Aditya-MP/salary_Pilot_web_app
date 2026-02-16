@@ -17,18 +17,17 @@
     @apply font-display text-navy-900 tracking-tight;
   }
 
-  /* Custom Scrollbar */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-slate-100;
+    @apply bg-transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-slate-300 rounded-full transition-colors;
+    @apply bg-slate-300/60 rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
@@ -38,15 +37,17 @@
 
 @layer components {
 
-  /* Premium Glassmorphism — Light */
+  /* ─── Premium Glass ─── */
   .glass-card {
-    @apply bg-white/60 backdrop-blur-xl border border-slate-200/50 rounded-2xl shadow-sm;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    @apply bg-white/60 backdrop-blur-xl border border-slate-200/50 rounded-2xl;
+    box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.02);
+    transition: all 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 
   .glass-card:hover {
-    @apply bg-white/80 border-slate-200 shadow-md;
-    transform: translateY(-4px);
+    @apply bg-white/80 border-slate-200;
+    box-shadow: 0 12px 40px -8px rgba(16, 185, 129, 0.12), 0 0 0 1px rgba(16, 185, 129, 0.08);
+    transform: translateY(-6px);
   }
 
   .glass-panel {
@@ -54,11 +55,70 @@
   }
 
   .glass-button {
-    @apply relative overflow-hidden bg-emerald-500 text-white font-semibold px-6 py-3 rounded-lg shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 hover:-translate-y-1 active:translate-y-0;
+    @apply relative overflow-hidden bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 hover:-translate-y-1 active:translate-y-0;
   }
 
   .glass-button-secondary {
-    @apply relative overflow-hidden bg-slate-100 text-emerald-600 font-semibold px-6 py-3 rounded-lg border border-slate-200 hover:bg-slate-200 transition-all duration-300;
+    @apply relative overflow-hidden bg-slate-100 text-emerald-600 font-semibold px-6 py-3 rounded-xl border border-slate-200 hover:bg-slate-200 transition-all duration-300;
+  }
+
+  /* ─── Gradient Border Effect ─── */
+  .gradient-border {
+    position: relative;
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.15));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .gradient-border:hover::before {
+    opacity: 1;
+  }
+
+  /* ─── Shimmer Sweep ─── */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    animation: shimmer-sweep 3s ease-in-out infinite;
+  }
+
+  /* ─── Stat Counter ─── */
+  .stat-highlight {
+    @apply relative;
+  }
+
+  .stat-highlight::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #10b981, #3b82f6);
+    border-radius: 999px;
+    opacity: 0.6;
   }
 }
 
@@ -73,6 +133,14 @@
 
   .animate-pulse-slow {
     animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer-sweep 3s ease-in-out infinite;
+  }
+
+  .animate-fade {
+    animation: fade 0.4s ease-out;
   }
 
   .text-glow {
@@ -96,6 +164,7 @@
   }
 }
 
+/* ─── Keyframes ─── */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -154,6 +223,13 @@
   }
 }
 
-.animate-fade {
-  animation: fade 0.4s ease-out;
+@keyframes shimmer-sweep {
+  0% {
+    left: -100%;
+  }
+
+  50%,
+  100% {
+    left: 200%;
+  }
 }

@@ -1,5 +1,5 @@
 import { useAppStore } from '../store/useAppStore';
-import { TrendingUp, Shield, Leaf, Calendar, ArrowRight } from 'lucide-react';
+import { TrendingUp, Shield, Leaf, Calendar, ArrowRight, Wallet, Activity, Sparkles, ChevronRight, BarChart3, Target } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, PieChart, Pie } from 'recharts';
 import { useLivePrices, calculatePortfolioValue } from '../hooks/useLivePrices';
@@ -7,7 +7,6 @@ import { useLivePrices, calculatePortfolioValue } from '../hooks/useLivePrices';
 export default function Dashboard() {
   const { holdings, streakCount, pulse, decisionLog } = useAppStore();
   const { prices } = useLivePrices();
-
   const totalPortfolio = calculatePortfolioValue(holdings, prices);
   const sustainabilityScore = Math.min(100, streakCount * 5 + (holdings.esg / totalPortfolio) * 50);
 
@@ -16,183 +15,155 @@ export default function Dashboard() {
     { name: 'Crypto', value: holdings.crypto, color: '#8b5cf6' },
     { name: 'ESG', value: holdings.esg, color: '#10b981' },
   ];
-
   const performanceData = [
-    { month: 'Jan', value: 2500, profit: 150 },
-    { month: 'Feb', value: 3200, profit: 280 },
-    { month: 'Mar', value: 2800, profit: -120 },
-    { month: 'Apr', value: 4100, profit: 420 },
-    { month: 'May', value: 3900, profit: 180 },
-    { month: 'Jun', value: 5200, profit: 650 },
+    { month: 'Jan', profit: 150 }, { month: 'Feb', profit: 280 }, { month: 'Mar', profit: -120 },
+    { month: 'Apr', profit: 420 }, { month: 'May', profit: 180 }, { month: 'Jun', profit: 650 },
   ];
 
   return (
-    <div className="p-8 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-navy-900">Financial Control Center</h1>
-        <p className="text-slate-500 mt-1">Your intelligent investment autopilot dashboard</p>
+    <div className="p-6 lg:p-8 space-y-6">
+      {/* Header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 p-6 lg:p-8 shadow-lg shadow-emerald-500/10">
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-1"><Activity className="text-white/70" size={16} /><span className="text-emerald-100 text-xs font-semibold tracking-wider uppercase">Live Dashboard</span></div>
+          <h1 className="text-2xl lg:text-3xl font-bold text-white">Financial Control Center</h1>
+          <p className="text-emerald-100/70 mt-1 text-sm">Your intelligent investment autopilot</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard icon={TrendingUp} label="Total Portfolio" value={`₹${totalPortfolio.toLocaleString()}`} color="blue" />
-        <MetricCard icon={Shield} label="Discipline Streak" value={`${streakCount} months`} color="purple" />
-        <MetricCard icon={Leaf} label="Sustainability Score" value={`${sustainabilityScore.toFixed(0)}%`} color="green" />
-        <MetricCard icon={Calendar} label="Pulse Status" value={`Month ${pulse.currentMonth}/3`} color="cyan" />
+      {/* Metrics */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <MetricCard icon={TrendingUp} label="Total Portfolio" value={`₹${totalPortfolio.toLocaleString()}`} color="blue" trend="+12.5%" />
+        <MetricCard icon={Shield} label="Discipline Streak" value={`${streakCount} months`} color="purple" trend="Active" />
+        <MetricCard icon={Leaf} label="Sustainability" value={`${sustainabilityScore.toFixed(0)}%`} color="green" trend="+5%" />
+        <MetricCard icon={Calendar} label="Pulse Status" value={`Month ${pulse.currentMonth}/3`} color="cyan" trend={pulse.state} />
       </div>
 
+      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white/60 backdrop-blur-xl border border-slate-200/50 rounded-xl p-6 shadow-sm">
-          <h2 className="text-xl font-semibold text-navy-900 mb-4">Asset Allocation</h2>
-          {totalPortfolio > 0 ? (
-            <div className="space-y-4">
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie data={portfolioData} cx="50%" cy="50%" outerRadius={80} dataKey="value">
-                    {portfolioData.map((entry, index) => (
-                      <Cell key={index} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="flex justify-center gap-6">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                  <span className="text-sm text-slate-600">Equity</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-                  <span className="text-sm text-slate-600">Crypto</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  <span className="text-sm text-slate-600">ESG</span>
-                </div>
+        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] overflow-hidden">
+          <div className="px-6 py-4 border-b border-white/[0.06] flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-blue-500/20 flex items-center justify-center"><BarChart3 className="text-blue-400" size={14} /></div>
+            <h2 className="text-white font-semibold">Asset Allocation</h2>
+          </div>
+          <div className="p-6">
+            {totalPortfolio > 0 ? (
+              <div className="space-y-4">
+                <ResponsiveContainer width="100%" height={220}>
+                  <PieChart><Pie data={portfolioData} cx="50%" cy="50%" outerRadius={75} innerRadius={45} dataKey="value" strokeWidth={0}>{portfolioData.map((e, i) => <Cell key={i} fill={e.color} />)}</Pie><Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }} /></PieChart>
+                </ResponsiveContainer>
+                <div className="flex justify-center gap-5">{[{ l: 'Equity', c: 'bg-blue-500' }, { l: 'Crypto', c: 'bg-purple-500' }, { l: 'ESG', c: 'bg-emerald-500' }].map(i => <div key={i.l} className="flex items-center gap-2"><div className={`w-2.5 h-2.5 rounded-full ${i.c}`} /><span className="text-xs text-slate-400">{i.l}</span></div>)}</div>
               </div>
-            </div>
-          ) : (
-            <div className="h-64 flex items-center justify-center text-slate-400">
-              No investments yet. Start with Salary Splitting.
-            </div>
-          )}
+            ) : <div className="h-56 flex flex-col items-center justify-center text-slate-500"><Target className="mb-2 text-slate-600" size={32} /><p className="text-sm">No investments yet.</p></div>}
+          </div>
         </div>
 
-        <div className="bg-white/60 backdrop-blur-xl border border-slate-200/50 rounded-xl p-6 shadow-sm">
-          <h2 className="text-xl font-semibold text-navy-900 mb-4">Performance Trend</h2>
-          {performanceData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
+        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] overflow-hidden">
+          <div className="px-6 py-4 border-b border-white/[0.06] flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center"><TrendingUp className="text-emerald-400" size={14} /></div>
+            <h2 className="text-white font-semibold">Performance Trend</h2>
+          </div>
+          <div className="p-6">
+            <ResponsiveContainer width="100%" height={240}>
               <BarChart data={performanceData}>
-                <XAxis dataKey="month" stroke="#94a3b8" />
-                <YAxis stroke="#94a3b8" />
-                <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }} labelStyle={{ color: '#0f172a' }} />
-                <Bar dataKey="profit" radius={[8, 8, 0, 0]}>
-                  {performanceData.map((entry, index) => (
-                    <Cell key={index} fill={entry.profit >= 0 ? '#10b981' : '#ef4444'} />
-                  ))}
-                </Bar>
+                <XAxis dataKey="month" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }} />
+                <Bar dataKey="profit" radius={[8, 8, 0, 0]}>{performanceData.map((e, i) => <Cell key={i} fill={e.profit >= 0 ? '#10b981' : '#ef4444'} />)}</Bar>
               </BarChart>
             </ResponsiveContainer>
-          ) : (
-            <div className="h-64 flex items-center justify-center text-slate-400">
-              Performance data will appear after investments.
-            </div>
-          )}
+          </div>
         </div>
       </div>
 
-      <div className="bg-white/60 backdrop-blur-xl border border-slate-200/50 rounded-xl p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-navy-900 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <ActionCard to="/dashboard/salary-splitting" label="Split Salary" icon={DollarSign} />
-          <ActionCard to="/dashboard/triple-guard" label="Approve Investment" icon={Shield} />
-          <ActionCard to="/dashboard/quarterly-pulse" label="Quarterly Pulse" icon={TrendingUp} />
+      {/* Quick Actions */}
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/[0.06] flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-amber-500/20 flex items-center justify-center"><Sparkles className="text-amber-400" size={14} /></div>
+          <h2 className="text-white font-semibold">Quick Actions</h2>
+        </div>
+        <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+          <ActionCard to="/dashboard/salary-splitting" label="Split Salary" desc="Configure allocation" icon={DollarSign} color="from-blue-500 to-cyan-500" />
+          <ActionCard to="/dashboard/triple-guard" label="Approve Investment" desc="Triple Guard check" icon={Shield} color="from-emerald-500 to-teal-500" />
+          <ActionCard to="/dashboard/quarterly-pulse" label="Quarterly Pulse" desc="3-month strategy" icon={TrendingUp} color="from-purple-500 to-violet-500" />
         </div>
       </div>
 
-      <div className="bg-white/60 backdrop-blur-xl border border-slate-200/50 rounded-xl p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-navy-900 mb-4">Investment Holdings</h2>
-        {totalPortfolio > 0 ? (
-          <div className="space-y-3">
-            <div className="bg-slate-50 rounded-lg p-4">
-              <p className="text-sm text-blue-600 font-semibold mb-2">Indian Equities</p>
-              <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
-                <div>• Reliance Industries: ₹{(holdings.equity * 0.3).toFixed(0)}</div>
-                <div>• TCS: ₹{(holdings.equity * 0.25).toFixed(0)}</div>
-                <div>• HDFC Bank: ₹{(holdings.equity * 0.25).toFixed(0)}</div>
-                <div>• Infosys: ₹{(holdings.equity * 0.2).toFixed(0)}</div>
-              </div>
+      {/* Holdings */}
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/[0.06] flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-blue-500/20 flex items-center justify-center"><Wallet className="text-blue-400" size={14} /></div>
+          <h2 className="text-white font-semibold">Investment Holdings</h2>
+        </div>
+        <div className="p-4">
+          {totalPortfolio > 0 ? (
+            <div className="grid md:grid-cols-3 gap-3">
+              <HoldingCard title="Indian Equities" color="blue" items={[{ n: 'Reliance', v: holdings.equity * 0.3 }, { n: 'TCS', v: holdings.equity * 0.25 }, { n: 'HDFC Bank', v: holdings.equity * 0.25 }, { n: 'Infosys', v: holdings.equity * 0.2 }]} />
+              <HoldingCard title="Crypto Assets" color="purple" items={[{ n: 'Bitcoin', v: holdings.crypto * 0.6 }, { n: 'Ethereum', v: holdings.crypto * 0.4 }]} />
+              <HoldingCard title="ESG Funds" color="green" items={[{ n: 'Nifty ESG Index', v: holdings.esg * 0.5 }, { n: 'Green Bonds', v: holdings.esg * 0.5 }]} />
             </div>
-            <div className="bg-slate-50 rounded-lg p-4">
-              <p className="text-sm text-purple-600 font-semibold mb-2">Crypto Assets</p>
-              <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
-                <div>• Bitcoin: ₹{(holdings.crypto * 0.6).toFixed(0)}</div>
-                <div>• Ethereum: ₹{(holdings.crypto * 0.4).toFixed(0)}</div>
-              </div>
-            </div>
-            <div className="bg-slate-50 rounded-lg p-4">
-              <p className="text-sm text-emerald-600 font-semibold mb-2">ESG Funds</p>
-              <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
-                <div>• Nifty ESG Index: ₹{(holdings.esg * 0.5).toFixed(0)}</div>
-                <div>• Green Bonds: ₹{(holdings.esg * 0.5).toFixed(0)}</div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <p className="text-slate-400 text-center py-8">No holdings yet. Start investing to see your portfolio.</p>
-        )}
+          ) : <p className="text-slate-500 text-center py-8 text-sm">No holdings yet.</p>}
+        </div>
       </div>
 
-      <div className="bg-white/60 backdrop-blur-xl border border-slate-200/50 rounded-xl p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-navy-900 mb-4">Recent Decisions</h2>
-        {decisionLog.length > 0 ? (
-          <div className="space-y-2">
-            {decisionLog.slice(0, 5).map((log, i) => (
-              <div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                <div>
-                  <span className="text-sm text-slate-600">{log.timestamp}</span>
-                  <span className="ml-3 text-sm text-blue-600">{log.emotion}</span>
-                </div>
-                <span className="text-sm text-emerald-600">{log.result}</span>
+      {/* Decisions */}
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/[0.06] flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-violet-500/20 flex items-center justify-center"><Shield className="text-violet-400" size={14} /></div>
+          <h2 className="text-white font-semibold">Recent Decisions</h2>
+        </div>
+        <div className="p-4">
+          {decisionLog.length > 0 ? <div className="space-y-2">{decisionLog.slice(0, 5).map((log, i) => (
+            <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] transition-all">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold">{i + 1}</div>
+                <div><span className="text-sm text-slate-300">{log.timestamp}</span><span className="ml-3 text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 font-medium">{log.emotion}</span></div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-slate-400">No decisions logged yet.</p>
-        )}
+              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400">{log.result}</span>
+            </div>
+          ))}</div> : <p className="text-slate-500 text-sm text-center py-6">No decisions logged yet.</p>}
+        </div>
       </div>
     </div>
   );
 }
 
-function MetricCard({ icon: Icon, label, value, color }: { icon: any; label: string; value: string; color: 'blue' | 'purple' | 'green' | 'cyan' }) {
-  const colors = {
-    blue: 'from-blue-100 to-blue-50 border-blue-200/50 text-blue-600',
-    purple: 'from-purple-100 to-purple-50 border-purple-200/50 text-purple-600',
-    green: 'from-green-100 to-green-50 border-green-200/50 text-green-600',
-    cyan: 'from-cyan-100 to-cyan-50 border-cyan-200/50 text-cyan-600',
+function MetricCard({ icon: Icon, label, value, color, trend }: { icon: any; label: string; value: string; color: string; trend: string }) {
+  const c: Record<string, { bg: string; icon: string; text: string }> = {
+    blue: { bg: 'bg-blue-500/10', icon: 'from-blue-500 to-blue-600', text: 'text-blue-400' },
+    purple: { bg: 'bg-purple-500/10', icon: 'from-purple-500 to-violet-600', text: 'text-purple-400' },
+    green: { bg: 'bg-emerald-500/10', icon: 'from-emerald-500 to-green-600', text: 'text-emerald-400' },
+    cyan: { bg: 'bg-cyan-500/10', icon: 'from-cyan-500 to-blue-500', text: 'text-cyan-400' },
   };
-
+  const cfg = c[color] || c.blue;
   return (
-    <div className={`bg-gradient-to-br ${colors[color]} backdrop-blur-xl border rounded-xl p-6 shadow-sm`}>
-      <Icon className="mb-2" size={24} />
-      <p className="text-sm text-slate-500">{label}</p>
-      <p className="text-2xl font-bold text-navy-900 mt-1">{value}</p>
+    <div className={`rounded-2xl ${cfg.bg} border border-white/[0.06] p-5 hover:bg-white/[0.05] transition-all`}>
+      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${cfg.icon} flex items-center justify-center mb-3 shadow-lg`}><Icon className="text-white" size={18} /></div>
+      <p className="text-xs text-slate-500">{label}</p>
+      <p className="text-xl font-bold text-white mt-0.5">{value}</p>
+      <p className={`text-xs ${cfg.text} font-medium mt-1`}>{trend}</p>
     </div>
   );
 }
 
-function ActionCard({ to, label, icon: Icon }: { to: string; label: string; icon: any }) {
+function ActionCard({ to, label, desc, icon: Icon, color }: { to: string; label: string; desc: string; icon: any; color: string }) {
   return (
-    <Link
-      to={to}
-      className="flex items-center justify-between p-4 bg-slate-50 hover:bg-emerald-50 border border-slate-200/50 hover:border-emerald-200 rounded-lg transition-all group"
-    >
-      <div className="flex items-center gap-3">
-        <Icon className="text-emerald-600" size={20} />
-        <span className="text-navy-900 font-medium">{label}</span>
-      </div>
-      <ArrowRight className="text-slate-400 group-hover:text-emerald-600 transition-colors" size={20} />
+    <Link to={to} className="group flex items-center gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] hover:border-emerald-500/20 transition-all">
+      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg`}><Icon className="text-white" size={18} /></div>
+      <div className="flex-1"><p className="text-white font-semibold text-sm">{label}</p><p className="text-xs text-slate-500">{desc}</p></div>
+      <ChevronRight className="text-slate-600 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" size={18} />
     </Link>
+  );
+}
+
+function HoldingCard({ title, color, items }: { title: string; color: string; items: { n: string; v: number }[] }) {
+  const cfg: Record<string, { text: string; dot: string }> = { blue: { text: 'text-blue-400', dot: 'bg-blue-500' }, purple: { text: 'text-purple-400', dot: 'bg-purple-500' }, green: { text: 'text-emerald-400', dot: 'bg-emerald-500' } };
+  const c = cfg[color] || cfg.blue;
+  return (
+    <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4">
+      <p className={`text-sm ${c.text} font-semibold mb-3`}>{title}</p>
+      <div className="space-y-2">{items.map(i => <div key={i.n} className="flex items-center justify-between text-xs"><div className="flex items-center gap-2"><div className={`w-1.5 h-1.5 rounded-full ${c.dot}`} /><span className="text-slate-400">{i.n}</span></div><span className="font-semibold text-white">₹{i.v.toFixed(0)}</span></div>)}</div>
+    </div>
   );
 }
 
