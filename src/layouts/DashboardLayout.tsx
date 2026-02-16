@@ -1,11 +1,17 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { LayoutDashboard, DollarSign, TrendingUp, Briefcase, Newspaper, GraduationCap, Bot, LogOut, Sparkles } from 'lucide-react';
+import { LayoutDashboard, DollarSign, TrendingUp, Briefcase, Newspaper, GraduationCap, Bot, LogOut, Sparkles, User, Crown } from 'lucide-react';
+import { useAppStore } from '../store/useAppStore';
 
 export default function DashboardLayout() {
+  const isPremium = useAppStore((s) => s.isPremium);
+  const togglePremium = useAppStore((s) => s.togglePremium);
+
   const handleLogout = () => {
     localStorage.removeItem('salary-pilot-storage');
     window.location.href = '/';
   };
+
+  const premiumRoutes = ['/dashboard/quarterly-pulse', '/dashboard/learning', '/dashboard/ai-coach'];
 
   const navItems = [
     { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -15,6 +21,7 @@ export default function DashboardLayout() {
     { to: '/dashboard/news', icon: Newspaper, label: 'News' },
     { to: '/dashboard/learning', icon: GraduationCap, label: 'Learning Hub' },
     { to: '/dashboard/ai-coach', icon: Bot, label: 'AI Coach' },
+    { to: '/dashboard/profile', icon: User, label: 'Profile' },
   ];
 
   return (
@@ -41,32 +48,52 @@ export default function DashboardLayout() {
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto custom-scrollbar">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === '/dashboard'}
-              className={({ isActive }) =>
-                `group flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-300 text-sm ${isActive
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isActive ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'bg-white/5 text-slate-400 group-hover:bg-white/10'}`}>
-                    <item.icon size={16} />
-                  </div>
-                  <span className="font-medium tracking-wide">{item.label}</span>
-                  {isActive && <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-500 rounded-l-full" />}
-                </>
-              )}
-            </NavLink>
-          ))}
+          {navItems
+            .filter((item) => isPremium || !premiumRoutes.includes(item.to))
+            .map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/dashboard'}
+                className={({ isActive }) =>
+                  `group flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-300 text-sm ${isActive
+                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isActive ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'bg-white/5 text-slate-400 group-hover:bg-white/10'}`}>
+                      <item.icon size={16} />
+                    </div>
+                    <span className="font-medium tracking-wide">{item.label}</span>
+                    {isActive && <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-500 rounded-l-full" />}
+                  </>
+                )}
+              </NavLink>
+            ))}
         </nav>
 
-        <div className="p-3 border-t border-white/[0.06]">
+        <div className="p-3 border-t border-white/[0.06] space-y-1">
+          {/* Premium toggle */}
+          <button onClick={togglePremium}
+            className={`group flex items-center gap-3 px-3.5 py-3 w-full rounded-xl transition-all duration-300 text-sm border ${isPremium
+                ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                : 'text-slate-500 hover:text-amber-400 hover:bg-amber-500/5 border-transparent hover:border-amber-500/20'
+              }`}>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isPremium ? 'bg-gradient-to-br from-amber-500 to-yellow-500 text-white shadow-lg shadow-amber-500/30' : 'bg-white/5 group-hover:bg-amber-500/10'
+              }`}>
+              <Crown size={16} />
+            </div>
+            <span className="font-medium">Premium</span>
+            {/* Toggle pill */}
+            <div className={`ml-auto w-9 h-5 rounded-full transition-all duration-300 relative ${isPremium ? 'bg-amber-500' : 'bg-white/10'}`}>
+              <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all duration-300 ${isPremium ? 'left-[18px]' : 'left-0.5'}`} />
+            </div>
+          </button>
+
+          {/* Logout */}
           <button onClick={handleLogout}
             className="group flex items-center gap-3 px-3.5 py-3 w-full rounded-xl text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-300 border border-transparent hover:border-red-500/20">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/5 group-hover:bg-red-500/20 transition-all">

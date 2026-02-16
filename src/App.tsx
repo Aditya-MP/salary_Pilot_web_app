@@ -12,9 +12,11 @@ import AICoach from './pages/AICoach';
 import RiskProfile from './pages/RiskProfile';
 import LandingPage from './pages/LandingPage';
 import AuthPage from './pages/AuthPage';
+import UserProfile from './pages/UserProfile';
 
 function App() {
   const onboardingCompleted = useAppStore((s) => s.onboardingCompleted);
+  const isPremium = useAppStore((s) => s.isPremium);
 
   return (
     <BrowserRouter>
@@ -32,11 +34,12 @@ function App() {
           <Route path="salary-splitting" element={<SalarySplitting />} />
           <Route path="risk-profile" element={<RiskProfile />} />
           <Route path="triple-guard" element={<TripleGuard />} />
-          <Route path="quarterly-pulse" element={<QuarterlyPulse />} />
+          <Route path="quarterly-pulse" element={isPremium ? <QuarterlyPulse /> : <Navigate to="/dashboard/profile" replace />} />
           <Route path="portfolio" element={<Portfolio />} />
           <Route path="news" element={<News />} />
-          <Route path="learning" element={<Learning />} />
-          <Route path="ai-coach" element={<AICoach />} />
+          <Route path="learning" element={isPremium ? <Learning /> : <Navigate to="/dashboard/profile" replace />} />
+          <Route path="ai-coach" element={isPremium ? <AICoach /> : <Navigate to="/dashboard/profile" replace />} />
+          <Route path="profile" element={<UserProfile />} />
         </Route>
 
         {/* Fallback */}
